@@ -1,204 +1,165 @@
 # AIIS — Arogya Infrastructure Intelligence System
 
-[![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.x-green.svg)](https://flask.palletsprojects.com/)
-[![Database](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ECF8E.svg)](https://supabase.com/)
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](#license)
+### Connecting Patients, Hospitals & Healthcare Authorities
 
-**Arogya Infrastructure Intelligence System (AIIS)** is a next-generation healthcare coordination and infrastructure intelligence platform engineered for emergency operations, real-time hospital bed capacity tracking, intelligent dispatch matching, and multilingual patient access.
+AIIS is a healthcare coordination platform designed to improve emergency hospital discovery, pre-arrival coordination and healthcare infrastructure visibility.
 
----
+Built during **Colossus 3.0 – National Level Hackathon** by Team **AFTER HOURS**, AIIS focuses on addressing real-world challenges in healthcare coordination through technology.
 
-## 🏛️ System Architecture
-
-AIIS bridges citizen emergency healthcare needs with real-time public hospital capacity through a unified multi-tier architecture:
-
-```
-                            ┌──────────────────────────────────────────┐
-                            │        Multilingual Client Web App       │
-                            │   (Vanilla ES6+ SPA, Hash Router, PWA)   │
-                            │             public/ & frontend/          │
-                            └────────────────────┬─────────────────────┘
-                                                 │
-                                                 ▼
-                            ┌──────────────────────────────────────────┐
-                            │         Unified API & Web Entry          │
-                            │       (run.py / api/index.py / Flask)    │
-                            └────────────────────┬─────────────────────┘
-                                                 │
-                 ┌───────────────────────────────┴───────────────────────────────┐
-                 ▼                                                               ▼
-  ┌───────────────────────────────┐                               ┌───────────────────────────────┐
-  │   Middleware & Security       │                               │   AIIS Backend V2 Core        │
-  │   - JWT / RBAC Authorization  │                               │   - Emergency Matching & SOS  │
-  │   - Tracking Token Hashing    │                               │   - Live Bed Capacity (SRI)   │
-  │   - Request Payload Validation│                               │   - Outpatient Appointments   │
-  └──────────────┬────────────────┘                               └──────────────┬────────────────┘
-                 │                                                               │
-                 └───────────────────────────────┬───────────────────────────────┘
-                                                 │
-                                                 ▼
-                                  ┌─────────────────────────────┐
-                                  │    Supabase PostgreSQL      │
-                                  │    - Row-Level Security     │
-                                  │    - Capacity History Trg   │
-                                  │    - Realtime Event Streams │
-                                  └─────────────────────────────┘
-```
-
-### Key Components
-
-- **`backend_v2/`**: Modular Flask backend adhering to strict layer separation (Routes, Services, Repositories, Schemas, Middleware).
-- **`public/`**: Fast, lightweight, zero-dependency multilingual frontend SPA (English, Kannada, Hindi, Tamil, Telugu, Malayalam, Marathi, Bengali, Gujarati, Odia, Urdu).
-- **`i18n-src/`**: Raw translation dictionaries and build script for multilingual compilation.
-- **`api/`**: Serverless deployment entrypoint for Vercel Python runtime (`api/index.py`).
-- **`backend_v2/database/`**: 12 modular SQL migrations and seed scripts establishing Row-Level Security (RLS) policies and table schemas.
+🏆 **Achievement:** 6th Place out of 70 Teams — Best UI/UX Design Category.
 
 ---
 
-## 📂 Repository Structure
+## 🎥 Project Demo
 
-```
-AIIS_WEBSITE_MULTILINGUAL/
-├── api/
-│   └── index.py                    # Vercel serverless entrypoint
-├── backend_v2/
-│   ├── app.py                      # Flask application factory
-│   ├── config.py                   # Environment configuration loader
-│   ├── extensions.py               # Supabase and cross-cutting extensions
-│   ├── data/                       # Verified Karnataka public hospital dataset
-│   │   ├── hospitals.csv
-│   │   └── verified_hospitals.json
-│   ├── database/                   # Schema migrations and seed SQL
-│   │   ├── migrations/             # 001 through 012 RLS migrations
-│   │   └── seeds/                  # Hospital directory seed scripts
-│   ├── middleware/                 # Auth, RBAC, and payload validation
-│   ├── repositories/               # Data access layer (Supabase / offline fallbacks)
-│   ├── routes/                     # Blueprint endpoints (emergency, capacity, auth, etc.)
-│   ├── schemas/                    # Request/response validation schemas
-│   ├── services/                   # Domain orchestration and dispatch logic
-│   ├── tests/                      # Automated pytest unit and integration test suite
-│   ├── utils/                      # Response wrappers, validators, coordinate math
-│   └── README.md                   # Backend-specific architecture guide
-├── frontend/                       # Supplementary staff/admin templates and assets
-├── public/                         # Production-ready citizen web application (SPA)
-│   ├── app.js                      # Core frontend application bundle
-│   ├── i18n.js                     # Multilingual translation engine
-│   ├── styles.css                  # Responsive design stylesheet
-│   ├── i18n/                       # Compiled localized JSON strings (11 languages)
-│   └── vendor/                     # Vendored client libraries (qrcode.js)
-├── i18n-src/                       # Raw source language files and build script
-├── .env.example                    # Template environment variables (safe placeholders)
-├── .gitignore                      # Comprehensive Git exclusion rules
-├── .vercelignore                   # Cloud deployment ignore rules
-├── dev-server.js                   # Lightweight Node.js static server & API proxy
-├── package.json                    # Frontend development scripts
-├── requirements.txt                # Root Python dependencies
-├── run.py                          # Canonical Flask local server entrypoint
-└── vercel.json                     # Vercel deployment configuration
-```
+<!-- Replace the placeholder below with your uploaded GitHub demo video link. -->
+
+[▶ Watch AIIS Project Demo](https://drive.google.com/file/d/14t6W_6f1-HcN5KSmHlCf_WFqqQFAT91O/view?usp=drive_link)
 
 ---
 
-## 🚀 Quick Start Guide
+## 💡 Problem Statement
 
-### 1. Prerequisites
+During medical emergencies, patients and their families often struggle to identify suitable hospitals, understand available capacity and coordinate with healthcare facilities before arrival.
 
-- Python 3.10+ (Python 3.11, 3.12, or 3.13 recommended)
-- Node.js 18+ (optional, for running standalone `dev-server.js`)
-- Git
+Hospitals also face challenges in communicating their readiness and managing incoming emergency requests.
 
-### 2. Environment Configuration
+AIIS aims to bridge this coordination gap by providing a unified platform connecting patients, hospitals and healthcare authorities.
 
-Clone the repository and create your local environment file:
+## 🚀 Key Features
 
-```bash
-cp .env.example .env
-```
+### 1. Emergency Hospital Discovery
+- Location-based hospital discovery using geolocation.
+- Emergency category selection.
+- Hospital matching based on capabilities, proximity and available capacity information.
+- Hospital details and relevant facility information.
 
-Edit `.env` with your specific settings:
+### 2. Emergency Pre-arrival Coordination
+- Guest-accessible emergency request submission.
+- Emergency request tracking.
+- Provisional bed allocation and capacity holds.
+- QR-based patient arrival pass.
+- OTP-based arrival verification by authorized hospital staff.
 
-```dotenv
-FLASK_ENV=development
-FLASK_SECRET_KEY=generate_with_python_secrets_token_hex_32
-SUPABASE_URL=https://<your-project-ref>.supabase.co
-SUPABASE_ANON_KEY=your_public_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_private_service_role_key
-CORS_ORIGINS=http://localhost:5000,http://localhost:8080,http://127.0.0.1:5000
-```
+### 3. Hospital Capacity Management
+- Hospital-specific staff access.
+- Emergency bed and ICU capacity updates.
+- Incoming emergency request management.
+- Patient arrival verification.
+- Capacity history and updates.
 
-> [!NOTE]
-> AIIS includes built-in offline fallbacks using verified hospital data. You can run the application locally even without active Supabase credentials.
+### 4. Planned Healthcare
+- Hospital and specialty discovery.
+- Outpatient appointment requests.
+- Appointment history and request management.
 
-### 3. Install Dependencies
+### 5. Strain Risk Index (SRI)
+- Healthcare infrastructure monitoring.
+- Regional and hospital-level capacity insights.
+- Risk classification to support infrastructure planning.
 
-Install the required Python packages:
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Run the Application
-
-Start the integrated full-stack server (serves both API and Web App on port 5000):
-
-```bash
-python run.py
-```
-
-- **Citizen Web App:** [http://localhost:5000/](http://localhost:5000/)
-- **API Health Check:** [http://localhost:5000/api/health](http://localhost:5000/api/health)
-
-Alternatively, for decoupled frontend development with hot static reloading:
-
-```bash
-# Terminal 1: Run Backend
-python run.py
-
-# Terminal 2: Run Dev Server (proxies /api to :5000)
-node dev-server.js
-```
+*Note: Capacity information depends on its source and freshness. Seeded or hospital-reported values should not be interpreted as independently verified real-time availability. AIIS does not guarantee hospital admission.*
 
 ---
 
-## 🧪 Testing & Verification
+## 🛠️ Technology Stack
 
-Run the automated test suite using pytest:
+| Layer | Technologies |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Backend | Python, Flask |
+| Database | Supabase, PostgreSQL |
+| Authentication | Supabase Auth |
+| API Communication | REST APIs, JSON |
+| Deployment | Vercel (original frontend deployment) |
 
-```bash
-# Run unit and contract test suites (138+ automated checks)
-pytest backend_v2/tests -k "not inspect_remote_schema and not post_deployment_rls_verifier and not run_remote_audit and not test_live_emergency_lifecycle"
+### Architecture
+
+```mermaid
+flowchart TD
+    A[Patients / Hospitals / Authorities]
+    B[Frontend - HTML, CSS, JavaScript]
+    C[Backend - Python Flask]
+    D[Supabase Authentication]
+    E[PostgreSQL Database]
+
+    A <--> B
+    B <--> C
+    C <--> D
+    C <--> E
 ```
 
-To run remote integration verifications against a live Supabase instance:
+## ⚙️ How It Works
 
-```bash
-# Ensure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in .env
-python -m backend_v2.tests.post_deployment_rls_verifier
-```
+1. A patient accesses AIIS and selects an emergency category.
+2. The application obtains the patient's location or accepts manual location input.
+3. The backend identifies suitable hospitals using available hospital information.
+4. The patient selects a hospital and submits an emergency request.
+5. The backend stores the request and manages the applicable provisional capacity hold.
+6. The patient receives tracking information and an arrival OTP.
+7. Authorized hospital staff manage the incoming request and verify arrival.
+8. Healthcare authorities can monitor infrastructure pressure through SRI.
 
 ---
 
-## 📚 Technical Documentation Index
+## 🔐 Security Considerations
 
-Detailed architectural and operational documentation is available in the repository:
-
-| Document | Purpose |
-| :--- | :--- |
-| [AIIS_TECHNICAL_ARCHITECTURE.md](AIIS_TECHNICAL_ARCHITECTURE.md) | In-depth technical architecture, data flows, and layer design |
-| [AIIS_INTEGRATION_CONTRACT.md](AIIS_INTEGRATION_CONTRACT.md) | Exhaustive API contract between frontend SPA and Backend V2 |
-| [AIIS_HACKATHON_DEMO_GUIDE.md](AIIS_HACKATHON_DEMO_GUIDE.md) | Step-by-step demo presentation guide and test walkthrough |
-| [AIIS_FINAL_INTEGRATION_REPORT.md](AIIS_FINAL_INTEGRATION_REPORT.md) | Final integration report, schema migrations, and test matrix |
-| [FRONTEND_API_INVENTORY.md](FRONTEND_API_INVENTORY.md) | Complete frontend endpoint catalog and payload structures |
-| [FRONTEND_INTEGRATION_NOTES.md](FRONTEND_INTEGRATION_NOTES.md) | Integration notes and contract harmonization details |
-| [HANDOFF_REPORT.md](HANDOFF_REPORT.md) | Frontend handoff documentation and tech stack breakdown |
-| [backend_v2/README.md](backend_v2/README.md) | Backend V2 specific architecture and stage completion status |
+- JWT-based authentication for protected operations.
+- Role-based access control.
+- Hospital-specific authorization and isolation.
+- Secure guest emergency tracking using hashed tracking credentials.
+- OTP-protected arrival verification.
+- Controlled database access through the backend.
+- Separation of public patient workflows and protected hospital operations.
 
 ---
 
-## 🔒 Security Best Practices
+## 👥 Team AFTER HOURS
 
-- **Never Commit Secrets:** Sensitive credentials (`.env`, service-role keys, private certificates) are strictly excluded via `.gitignore`.
-- **Row-Level Security (RLS):** Supabase PostgreSQL tables are protected by comprehensive RLS policies preventing cross-tenant or cross-patient access.
-- **Tracking Token Privacy:** Emergency citizen tracking tokens are stored solely as cryptographic SHA-256 hashes in the database.
-- **Role Isolation:** Explicit RBAC middleware enforces strict role verification (`patient`, `hospital_admin`, `authority`, `platform_admin`).
+| Member | Role |
+|---|---|
+| Ashish P | Full-Stack Development Lead |
+| Sushanth Hegde | Product & Project Lead |
+| Affan Zoheb | AI & Predictive Analytics Lead |
+| Harsha Kolli | Healthcare Workflow & UX Lead |
+
+## 🏆 Achievement
+
+**Colossus 3.0 — National Level Hackathon**
+
+- Secured **6th Position out of 70 Teams** in the Best UI/UX Design category.
+- Built AIIS within a 24-hour hackathon.
+- Focused on creating an intuitive user experience for a real-world healthcare challenge.
+
+---
+
+## 🔮 Future Scope
+
+- Integration with hospital information management systems.
+- Automated hospital capacity updates.
+- Verified real-time healthcare infrastructure data.
+- Multilingual accessibility.
+- Improved regional healthcare analytics.
+- Integration with emergency response and ambulance networks.
+
+---
+
+## 📌 Project Information
+
+**Project:** AIIS — Arogya Infrastructure Intelligence System
+
+**Team:** AFTER HOURS
+
+**Event:** Colossus 3.0 — National Level Hackathon
+
+**Category:** Healthcare Technology
+
+**Focus:** Emergency Coordination | Hospital Capacity Intelligence | Healthcare Infrastructure
+
+---
+
+### Built with purpose. Designed for impact.
+
+Our goal is to make healthcare coordination more accessible, connected and efficient — one step at a time.
+
+⭐ If you find this project interesting, consider giving the repository a star!
