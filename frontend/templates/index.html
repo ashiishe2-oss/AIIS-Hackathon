@@ -1,0 +1,2706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="AIIS – Advanced Integrated Intelligence System. AI-powered 7–14 day health risk intelligence for proactive outbreak response." />
+  <title>AIIS – Advanced Integrated Intelligence System</title>
+
+  <style>
+    /* ===========================================================
+       DESIGN TOKENS
+    =========================================================== */
+    :root {
+      /* Brand */
+      --c-primary: #1f4e79;
+      --c-primary-dark: #163a5f;
+      --c-primary-mid: #2d6fad;
+      --c-primary-light: #e8f1fa;
+      --c-primary-xlight: #f0f6ff;
+      --c-accent: #3b82f6;
+
+      /* Risk */
+      --c-high: #e63946;
+      --c-high-bg: #fdf1f2;
+      --c-high-border: #f5c6ca;
+      --c-medium: #e07b39;
+      --c-medium-bg: #fef6ef;
+      --c-medium-border: #f9d9be;
+      --c-low: #2a9d8f;
+      --c-low-bg: #edf7f6;
+      --c-low-border: #b6e4df;
+
+      /* Neutrals */
+      --c-bg: #f8f9fb;
+      --c-surface: #ffffff;
+      --c-border: #e2e8f0;
+      --c-border-strong: #cbd5e1;
+
+      /* Text */
+      --c-text: #1e293b;
+      --c-text-2: #4a5568;
+      --c-text-3: #7a8fa8;
+      --c-text-muted: #94a3b8;
+
+      /* Shadows */
+      --sh-xs: 0 1px 3px rgba(15, 30, 60, .05);
+      --sh-sm: 0 2px 8px rgba(15, 30, 60, .08);
+      --sh-md: 0 4px 18px rgba(15, 30, 60, .10);
+      --sh-lg: 0 10px 36px rgba(15, 30, 60, .12);
+      --sh-xl: 0 20px 56px rgba(15, 30, 60, .14);
+
+      /* Spacing */
+      --sp-1: 2px;
+      --sp-2: 4px;
+      --sp-3: 8px;
+      --sp-4: 12px;
+      --sp-5: 16px;
+      --sp-6: 20px;
+      --sp-7: 24px;
+      --sp-8: 32px;
+      --sp-10: 40px;
+      --sp-12: 48px;
+      --sp-14: 56px;
+      --sp-16: 64px;
+      --sp-20: 80px;
+
+      /* Radius */
+      --r-sm: 6px;
+      --r-md: 10px;
+      --r-lg: 14px;
+      --r-xl: 20px;
+      --r-pill: 999px;
+
+      /* Typography */
+      --font: 'Segoe UI', -apple-system, BlinkMacSystemFont,
+        'Helvetica Neue', Helvetica, sans-serif;
+      --mono: 'Cascadia Code', 'Consolas', 'SF Mono', 'Menlo', monospace;
+
+      /* Transitions */
+      --t-fast: .15s ease;
+      --t-base: .22s ease;
+      --t-slow: .30s cubic-bezier(.4, 0, .2, 1);
+
+      /* Layout */
+      --max-w: 1120px;
+      --nav-h: 62px;
+    }
+
+    /* ===========================================================
+       RESET
+    =========================================================== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--c-bg);
+      color: var(--c-text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    img,
+    svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    /* ===========================================================
+       LAYOUT UTILS
+    =========================================================== */
+    .wrap {
+      width: 100%;
+      max-width: var(--max-w);
+      margin-inline: auto;
+      padding-inline: var(--sp-8);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    /* ===========================================================
+       KEYFRAMES
+    =========================================================== */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulseDot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(.7);
+      }
+    }
+
+    @keyframes ripple {
+      0% {
+        box-shadow: 0 0 0 0 rgba(230, 57, 70, .45);
+      }
+
+      70% {
+        box-shadow: 0 0 0 14px rgba(230, 57, 70, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(230, 57, 70, 0);
+      }
+    }
+
+    @keyframes floatCard {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @keyframes barGrow {
+      from {
+        width: 0;
+      }
+
+      to {
+        width: var(--bar-w);
+      }
+    }
+
+    @keyframes counterPop {
+      from {
+        opacity: 0;
+        transform: scale(.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ===========================================================
+       ── NEW ──  NAVBAR (updated with nav links)
+    =========================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 300;
+      height: var(--nav-h);
+      background: var(--c-primary);
+      border-bottom: 3px solid var(--c-primary-dark);
+      box-shadow: 0 2px 16px rgba(15, 40, 80, .28);
+    }
+
+    .navbar__inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-8);
+    }
+
+    /* Brand */
+    .navbar__brand {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      flex-shrink: 0;
+    }
+
+    .navbar__logo-box {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, .13);
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: background var(--t-fast);
+    }
+
+    .navbar__brand:hover .navbar__logo-box {
+      background: rgba(255, 255, 255, .22);
+    }
+
+    .navbar__brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .navbar__name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .navbar__tagline {
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .5);
+      line-height: 1;
+    }
+
+    /* ── NEW ── Nav links */
+    .navbar__nav {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .navbar__nav-link {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .75);
+      padding: 7px 14px;
+      border-radius: var(--r-md);
+      transition: color var(--t-fast), background var(--t-fast);
+      letter-spacing: -.1px;
+    }
+
+    .navbar__nav-link:hover,
+    .navbar__nav-link.active {
+      color: #fff;
+      background: rgba(255, 255, 255, .12);
+    }
+
+    /* Right side */
+    .navbar__right {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+      flex-shrink: 0;
+    }
+
+    .navbar__timestamp {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: rgba(255, 255, 255, .70);
+      white-space: nowrap;
+    }
+
+    .navbar__live {
+      width: 7px;
+      height: 7px;
+      border-radius: var(--r-pill);
+      background: #4ade80;
+      flex-shrink: 0;
+      animation: pulseDot 2.2s ease-in-out infinite;
+    }
+
+    /* ── NEW ── Login button */
+    .btn-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      transition: background var(--t-fast), border-color var(--t-fast);
+      white-space: nowrap;
+    }
+
+    .btn-login:hover {
+      background: rgba(255, 255, 255, .22);
+      border-color: rgba(255, 255, 255, .40);
+    }
+
+
+    /* ===========================================================
+       ── NEW ── HOME / HERO SECTION  (#home)
+    =========================================================== */
+    #home {
+      position: relative;
+      padding: 100px 0 96px;
+      overflow: hidden;
+      background:
+        linear-gradient(150deg, #0d2444 0%, var(--c-primary) 45%, #1a4d7c 100%);
+    }
+
+    /* Background grid texture */
+    #home::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+      background-size: 52px 52px;
+      pointer-events: none;
+    }
+
+    /* Radial glow spots */
+    #home::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 65% 55% at 15% 55%, rgba(59, 130, 246, .18) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 45% at 80% 20%, rgba(42, 157, 143, .13) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero__inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 64px;
+    }
+
+    /* Left: copy */
+    .hero__copy {
+      animation: fadeUp .5s ease .05s both;
+    }
+
+    .hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .9px;
+      text-transform: uppercase;
+      color: #93c5fd;
+      background: rgba(147, 197, 253, .12);
+      border: 1px solid rgba(147, 197, 253, .25);
+      padding: 5px 14px;
+      border-radius: var(--r-pill);
+      margin-bottom: 22px;
+      font-family: var(--mono);
+    }
+
+    .hero__badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: var(--r-pill);
+      animation: pulseDot 2s ease infinite;
+    }
+
+    .hero__h1 {
+      font-size: clamp(28px, 3.8vw, 50px);
+      font-weight: 800;
+      line-height: 1.10;
+      letter-spacing: -1.5px;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .hero__h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, #93c5fd, #6ee7b7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero__sub {
+      font-size: 16px;
+      color: rgba(255, 255, 255, .62);
+      line-height: 1.75;
+      max-width: 440px;
+      margin-bottom: 38px;
+    }
+
+    .hero__cta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      background: #ffffff;
+      color: var(--c-primary);
+      border-radius: var(--r-lg);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -.2px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .2);
+      transition: transform var(--t-slow), box-shadow var(--t-slow);
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .28);
+    }
+
+    .btn-hero-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 24px;
+      background: rgba(255, 255, 255, .10);
+      border: 1px solid rgba(255, 255, 255, .22);
+      color: rgba(255, 255, 255, .88);
+      border-radius: var(--r-lg);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+      transition: background var(--t-fast), transform var(--t-slow);
+    }
+
+    .btn-hero-ghost:hover {
+      background: rgba(255, 255, 255, .18);
+      transform: translateY(-2px);
+    }
+
+    /* Right: floating preview card */
+    .hero__preview {
+      animation: fadeUp .5s ease .18s both;
+    }
+
+    .hero__float-card {
+      background: rgba(255, 255, 255, .93);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, .6);
+      border-radius: var(--r-xl);
+      padding: 28px;
+      box-shadow: var(--sh-xl);
+      animation: floatCard 5.5s ease-in-out infinite;
+    }
+
+    .hf-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .hf-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--c-text);
+    }
+
+    .hf-live {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--c-low);
+    }
+
+    .hf-live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--c-low);
+      border-radius: var(--r-pill);
+      animation: pulseDot 2s ease infinite;
+    }
+
+    .hf-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .hf-metric {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .hf-metric-val {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 3px;
+      color: var(--c-text);
+    }
+
+    .hf-metric-val.red {
+      color: var(--c-high);
+    }
+
+    .hf-metric-val.amber {
+      color: var(--c-medium);
+    }
+
+    .hf-metric-val.green {
+      color: var(--c-low);
+    }
+
+    .hf-metric-key {
+      font-size: 10px;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--c-text-muted);
+      font-weight: 500;
+    }
+
+    .hf-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .hf-bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hf-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--c-text-2);
+    }
+
+    .hf-track {
+      height: 6px;
+      background: rgba(0, 0, 0, .06);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+    }
+
+    .hf-fill {
+      height: 100%;
+      border-radius: var(--r-pill);
+      animation: barGrow .9s cubic-bezier(.4, 0, .2, 1) .6s both;
+    }
+
+    .hf-fill.high {
+      --bar-w: 78%;
+      background: var(--c-high);
+    }
+
+    .hf-fill.medium {
+      --bar-w: 55%;
+      background: var(--c-medium);
+    }
+
+    .hf-fill.low {
+      --bar-w: 32%;
+      background: var(--c-low);
+    }
+
+
+    /* ===========================================================
+       ── EXISTING ── STATS BAR
+    =========================================================== */
+    .stats-bar {
+      background: var(--c-surface);
+      border-bottom: 1px solid var(--c-border);
+      padding: var(--sp-8) 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 22px var(--sp-7);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: var(--sh-xs);
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow var(--t-slow), transform var(--t-slow);
+    }
+
+    .stat-card:hover {
+      box-shadow: var(--sh-md);
+      transform: translateY(-4px);
+    }
+
+    /* Top accent */
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .stat-total::before {
+      background: linear-gradient(90deg, var(--c-primary), var(--c-accent));
+    }
+
+    .stat-high::before {
+      background: var(--c-high);
+    }
+
+    .stat-medium::before {
+      background: var(--c-medium);
+    }
+
+    .stat-low::before {
+      background: var(--c-low);
+    }
+
+    /* Left accent */
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .stat-total::after {
+      background: var(--c-primary);
+    }
+
+    .stat-high::after {
+      background: var(--c-high);
+    }
+
+    .stat-medium::after {
+      background: var(--c-medium);
+    }
+
+    .stat-low::after {
+      background: var(--c-low);
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .stat-total .stat-icon {
+      background: var(--c-primary-light);
+    }
+
+    .stat-high .stat-icon {
+      background: var(--c-high-bg);
+    }
+
+    .stat-medium .stat-icon {
+      background: var(--c-medium-bg);
+    }
+
+    .stat-low .stat-icon {
+      background: var(--c-low-bg);
+    }
+
+    .stat-val {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .stat-total .stat-val {
+      color: var(--c-primary);
+    }
+
+    .stat-high .stat-val {
+      color: var(--c-high);
+    }
+
+    .stat-medium .stat-val {
+      color: var(--c-medium);
+    }
+
+    .stat-low .stat-val {
+      color: var(--c-low);
+    }
+
+    .stat-lbl {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--c-text-2);
+      letter-spacing: -.1px;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--c-text-muted);
+      font-family: var(--mono);
+      margin-top: 2px;
+    }
+
+
+    /* ===========================================================
+       ── EXISTING ── ALERT BANNER
+    =========================================================== */
+    .alert-wrap {
+      padding: var(--sp-7) 0 0;
+    }
+
+    .alert-banner {
+      background: linear-gradient(135deg, #b91c27 0%, var(--c-high) 55%, #f05565 100%);
+      border-radius: var(--r-lg);
+      padding: 16px var(--sp-7);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 22px rgba(230, 57, 70, .30);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(-50deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, .03) 4px,
+          transparent 4px, transparent 16px);
+      pointer-events: none;
+    }
+
+    .alert-pulse {
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: var(--r-pill);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      animation: ripple 2s ease-out infinite;
+    }
+
+    .alert-icon {
+      font-size: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .alert-content {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .alert-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.1px;
+    }
+
+    .alert-sub {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .72);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .alert-ts {
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, .62);
+      font-family: var(--mono);
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .alert-btn {
+      background: rgba(255, 255, 255, .18);
+      border: 1px solid rgba(255, 255, 255, .32);
+      border-radius: var(--r-md);
+      padding: 7px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      transition: background var(--t-fast);
+    }
+
+    .alert-btn:hover {
+      background: rgba(255, 255, 255, .28);
+    }
+
+
+    /* ===========================================================
+       ── EXISTING ── HOSPITAL CARDS GRID
+    =========================================================== */
+    .hosp-section {
+      padding: var(--sp-12) 0;
+    }
+
+    .hosp-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: var(--sp-7);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--c-primary);
+      font-family: var(--mono);
+      margin-bottom: 4px;
+    }
+
+    .section-h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+      color: var(--c-text);
+    }
+
+    .section-sub {
+      font-size: 13.5px;
+      color: var(--c-text-muted);
+      margin-top: 3px;
+    }
+
+    .info-strip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--c-primary-light);
+      border: 1px solid #bcd3ee;
+      border-radius: var(--r-lg);
+      padding: 14px var(--sp-7);
+      margin-bottom: var(--sp-8);
+      font-size: 13px;
+      color: var(--c-primary);
+      font-weight: 500;
+      animation: fadeIn .5s ease .1s both;
+    }
+
+    .info-strip__meta {
+      margin-left: auto;
+      font-size: 11.5px;
+      font-family: var(--mono);
+      color: #4a7ab5;
+      white-space: nowrap;
+    }
+
+    .hosp-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .hosp-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: var(--sh-sm);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--t-slow), transform var(--t-slow), border-color var(--t-base);
+    }
+
+    .hosp-card:nth-child(1) {
+      animation: fadeUp .4s ease .18s both;
+    }
+
+    .hosp-card:nth-child(2) {
+      animation: fadeUp .4s ease .24s both;
+    }
+
+    .hosp-card:nth-child(3) {
+      animation: fadeUp .4s ease .30s both;
+    }
+
+    .hosp-card:hover {
+      box-shadow: var(--sh-xl);
+      transform: translateY(-6px);
+    }
+
+    .hosp-card--high:hover {
+      border-color: var(--c-high-border);
+    }
+
+    .hosp-card--medium:hover {
+      border-color: var(--c-medium-border);
+    }
+
+    .hosp-card--low:hover {
+      border-color: var(--c-low-border);
+    }
+
+    .card-strip {
+      height: 5px;
+    }
+
+    .hosp-card--high .card-strip {
+      background: linear-gradient(90deg, var(--c-high), #f05565);
+    }
+
+    .hosp-card--medium .card-strip {
+      background: linear-gradient(90deg, var(--c-medium), #f9b97a);
+    }
+
+    .hosp-card--low .card-strip {
+      background: linear-gradient(90deg, var(--c-low), #3dbdac);
+    }
+
+    .card-body {
+      padding: var(--sp-7);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-name-wrap .card-icon {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .card-name {
+      font-size: 15.5px;
+      font-weight: 700;
+      letter-spacing: -.3px;
+      color: var(--c-text);
+      line-height: 1.2;
+    }
+
+    .card-loc {
+      font-size: 11.5px;
+      color: var(--c-text-muted);
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border-radius: var(--r-pill);
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: var(--mono);
+    }
+
+    .badge--high {
+      background: var(--c-high-bg);
+      color: var(--c-high);
+      border: 1px solid var(--c-high-border);
+    }
+
+    .badge--medium {
+      background: var(--c-medium-bg);
+      color: var(--c-medium);
+      border: 1px solid var(--c-medium-border);
+    }
+
+    .badge--low {
+      background: var(--c-low-bg);
+      color: var(--c-low);
+      border: 1px solid var(--c-low-border);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--r-pill);
+      background: currentColor;
+    }
+
+    .score-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px 16px;
+      border-radius: var(--r-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hosp-card--high .score-wrap {
+      background: var(--c-high-bg);
+      border: 1px solid var(--c-high-border);
+    }
+
+    .hosp-card--medium .score-wrap {
+      background: var(--c-medium-bg);
+      border: 1px solid var(--c-medium-border);
+    }
+
+    .hosp-card--low .score-wrap {
+      background: var(--c-low-bg);
+      border: 1px solid var(--c-low-border);
+    }
+
+    .score-lbl {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: var(--c-text-muted);
+      font-family: var(--mono);
+      margin-bottom: 4px;
+    }
+
+    .score-num {
+      font-size: 58px;
+      font-weight: 800;
+      letter-spacing: -3px;
+      line-height: 1;
+      animation: counterPop .4s ease .5s both;
+    }
+
+    .hosp-card--high .score-num {
+      color: var(--c-high);
+    }
+
+    .hosp-card--medium .score-num {
+      color: var(--c-medium);
+    }
+
+    .hosp-card--low .score-num {
+      color: var(--c-low);
+    }
+
+    .score-denom {
+      font-size: 13px;
+      color: var(--c-text-muted);
+      margin-top: 3px;
+    }
+
+    .score-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(0, 0, 0, .07);
+      border-radius: var(--r-pill);
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: var(--r-pill);
+      animation: barGrow .9s cubic-bezier(.4, 0, .2, 1) .7s both;
+    }
+
+    .hosp-card--high .score-fill {
+      --bar-w: 78%;
+      background: var(--c-high);
+    }
+
+    .hosp-card--medium .score-fill {
+      --bar-w: 55%;
+      background: var(--c-medium);
+    }
+
+    .hosp-card--low .score-fill {
+      --bar-w: 32%;
+      background: var(--c-low);
+    }
+
+    .meta-chips {
+      display: flex;
+      gap: 8px;
+    }
+
+    .meta-chip {
+      flex: 1;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    .chip-v {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--c-text);
+      line-height: 1.1;
+    }
+
+    .chip-k {
+      font-size: 10px;
+      color: var(--c-text-muted);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      font-family: var(--mono);
+      margin-top: 2px;
+    }
+
+    .btn-view-details {
+      width: 100%;
+      padding: 11px;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border-strong);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--c-text);
+      letter-spacing: -.1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all var(--t-base);
+    }
+
+    .btn-view-details:hover {
+      background: var(--c-primary);
+      color: #fff;
+      border-color: var(--c-primary);
+    }
+
+    .btn-view-details:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    .btn-view-details.high:hover {
+      background: var(--c-high);
+      border-color: var(--c-high);
+    }
+
+    .btn-view-details.medium:hover {
+      background: var(--c-medium);
+      border-color: var(--c-medium);
+    }
+
+    .btn-view-details.low:hover {
+      background: var(--c-low);
+      border-color: var(--c-low);
+    }
+
+    .arrow {
+      transition: transform var(--t-fast);
+    }
+
+
+    /* ===========================================================
+       ── NEW ── ABOUT SECTION  (#about)
+    =========================================================== */
+    #about {
+      padding: var(--sp-20) 0;
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+    }
+
+    .about__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: start;
+    }
+
+    .about__copy {
+      animation: fadeUp .4s ease .08s both;
+    }
+
+    .about__copy .eyebrow {
+      margin-bottom: 8px;
+    }
+
+    .about__h2 {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--c-text);
+      line-height: 1.15;
+      margin-bottom: var(--sp-7);
+    }
+
+    .about__body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .about__p {
+      font-size: 15px;
+      color: var(--c-text-2);
+      line-height: 1.80;
+    }
+
+    .about__p strong {
+      color: var(--c-primary);
+      font-weight: 700;
+    }
+
+    /* Feature cards column */
+    .about__features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeUp .4s ease .18s both;
+    }
+
+    .feat-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 22px;
+      box-shadow: var(--sh-xs);
+      transition: box-shadow var(--t-slow), transform var(--t-slow), border-color var(--t-base);
+    }
+
+    .feat-card:hover {
+      box-shadow: var(--sh-md);
+      transform: translateY(-3px);
+      border-color: #bcd3ee;
+    }
+
+    .feat-icon-box {
+      width: 46px;
+      height: 46px;
+      background: var(--c-primary-light);
+      border: 1px solid #bcd3ee;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .feat-info {
+      display: block;
+    }
+
+    .feat-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+      color: var(--c-text);
+      margin-bottom: 5px;
+    }
+
+    .feat-desc {
+      font-size: 13.5px;
+      color: var(--c-text-2);
+      line-height: 1.65;
+    }
+
+    /* About stats row */
+    .about__stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: var(--sp-7);
+      padding-top: var(--sp-7);
+      border-top: 1px solid var(--c-border);
+    }
+
+    .about__stat {
+      text-align: center;
+      padding: 14px 8px;
+      background: var(--c-primary-xlight);
+      border: 1px solid #bcd3ee;
+      border-radius: var(--r-lg);
+    }
+
+    .about__stat-val {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--c-primary);
+      line-height: 1;
+    }
+
+    .about__stat-key {
+      font-size: 10.5px;
+      color: var(--c-text-muted);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-top: 4px;
+    }
+
+
+    /* ===========================================================
+       ── NEW ── DASHBOARD PREVIEW SECTION  (#dashboard)
+    =========================================================== */
+    #dashboard {
+      padding: var(--sp-20) 0;
+      background: var(--c-bg);
+      border-top: 1px solid var(--c-border);
+    }
+
+    .dash-preview__intro {
+      text-align: center;
+      max-width: 580px;
+      margin: 0 auto var(--sp-12);
+      animation: fadeUp .4s ease .05s both;
+    }
+
+    .dash-preview__intro .eyebrow {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .dash-preview__h2 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--c-text);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .dash-preview__desc {
+      font-size: 15px;
+      color: var(--c-text-2);
+      line-height: 1.75;
+    }
+
+    /* Preview frame */
+    .dash-preview__frame-wrap {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--sh-lg);
+      overflow: hidden;
+      animation: fadeUp .4s ease .15s both;
+    }
+
+    /* Fake browser chrome */
+    .dash-chrome {
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--c-border);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .dash-chrome__dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chrome-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: var(--r-pill);
+    }
+
+    .chrome-dot:nth-child(1) {
+      background: #fc5f57;
+    }
+
+    .chrome-dot:nth-child(2) {
+      background: #febc2e;
+    }
+
+    .chrome-dot:nth-child(3) {
+      background: #28c840;
+    }
+
+    .dash-chrome__bar {
+      flex: 1;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--c-text-muted);
+    }
+
+    /* Dashboard inner preview content */
+    .dash-preview__body {
+      padding: var(--sp-7);
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Mini top bar */
+    .dp-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--c-primary);
+      border-radius: var(--r-md);
+      padding: 12px 18px;
+    }
+
+    .dp-topbar-brand {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.2px;
+    }
+
+    .dp-topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: rgba(255, 255, 255, .70);
+    }
+
+    /* Mini stats strip */
+    .dp-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .dp-stat {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .dp-stat-val {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .dp-stat-val.blue {
+      color: var(--c-primary);
+    }
+
+    .dp-stat-val.red {
+      color: var(--c-high);
+    }
+
+    .dp-stat-val.amber {
+      color: var(--c-medium);
+    }
+
+    .dp-stat-val.green {
+      color: var(--c-low);
+    }
+
+    .dp-stat-lbl {
+      font-size: 10px;
+      color: var(--c-text-muted);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    /* Mini cards row */
+    .dp-cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .dp-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-lg);
+      padding: 16px;
+      box-shadow: var(--sh-xs);
+    }
+
+    .dp-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .dp-card-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--c-text);
+    }
+
+    .dp-card-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: var(--r-pill);
+      font-family: var(--mono);
+    }
+
+    .dp-card-badge.high {
+      background: var(--c-high-bg);
+      color: var(--c-high);
+    }
+
+    .dp-card-badge.medium {
+      background: var(--c-medium-bg);
+      color: var(--c-medium);
+    }
+
+    .dp-card-badge.low {
+      background: var(--c-low-bg);
+      color: var(--c-low);
+    }
+
+    .dp-score {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .dp-score.high {
+      color: var(--c-high);
+    }
+
+    .dp-score.medium {
+      color: var(--c-medium);
+    }
+
+    .dp-score.low {
+      color: var(--c-low);
+    }
+
+    .dp-track {
+      height: 4px;
+      background: rgba(0, 0, 0, .06);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .dp-fill {
+      height: 100%;
+      border-radius: var(--r-pill);
+    }
+
+    .dp-fill.high {
+      background: var(--c-high);
+      width: 78%;
+    }
+
+    .dp-fill.medium {
+      background: var(--c-medium);
+      width: 55%;
+    }
+
+    .dp-fill.low {
+      background: var(--c-low);
+      width: 32%;
+    }
+
+    /* Bottom alert bar inside preview */
+    .dp-alert-bar {
+      background: linear-gradient(135deg, #b91c27, var(--c-high));
+      border-radius: var(--r-md);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .dp-alert-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--r-pill);
+      background: #fff;
+      flex-shrink: 0;
+      animation: pulseDot 1.6s ease infinite;
+    }
+
+    /* CTA below preview */
+    .dash-preview__cta {
+      text-align: center;
+      margin-top: var(--sp-10);
+    }
+
+    .btn-dash-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: var(--c-primary);
+      color: #fff;
+      border-radius: var(--r-lg);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -.2px;
+      box-shadow: 0 4px 20px rgba(31, 78, 121, .32);
+      transition: background var(--t-base), transform var(--t-slow), box-shadow var(--t-slow);
+    }
+
+    .btn-dash-cta:hover {
+      background: var(--c-primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(31, 78, 121, .42);
+    }
+
+    .btn-dash-cta .arrow {
+      transition: transform var(--t-fast);
+    }
+
+    .btn-dash-cta:hover .arrow {
+      transform: translateX(4px);
+    }
+
+
+    /* ===========================================================
+       ── NEW ── FOOTER  (professional minimal)
+    =========================================================== */
+    footer {
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+    }
+
+    .footer__main {
+      padding: var(--sp-14) 0 var(--sp-10);
+    }
+
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+    }
+
+    /* Col 1: brand */
+    .footer__brand-col {
+      display: block;
+    }
+
+    .footer__logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .footer__logo-box {
+      width: 36px;
+      height: 36px;
+      background: var(--c-primary);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .footer__brand-name {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+      color: var(--c-text);
+    }
+
+    .footer__brand-sub {
+      font-size: 10.5px;
+      font-family: var(--mono);
+      color: var(--c-text-muted);
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+
+    .footer__desc {
+      font-size: 13.5px;
+      color: var(--c-text-2);
+      line-height: 1.75;
+      max-width: 280px;
+      margin-bottom: var(--sp-7);
+    }
+
+    .footer__status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--c-low);
+      font-weight: 600;
+      background: var(--c-low-bg);
+      border: 1px solid var(--c-low-border);
+      padding: 5px 14px;
+      border-radius: var(--r-pill);
+    }
+
+    .footer__status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: var(--r-pill);
+      background: var(--c-low);
+      animation: pulseDot 2.2s ease infinite;
+    }
+
+    /* Nav cols */
+    .footer__col-head {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--c-text);
+      font-family: var(--mono);
+      margin-bottom: 16px;
+    }
+
+    .footer__col-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer__col-link {
+      font-size: 13.5px;
+      color: var(--c-text-2);
+      font-weight: 500;
+      transition: color var(--t-fast);
+    }
+
+    .footer__col-link:hover {
+      color: var(--c-primary);
+    }
+
+    /* Divider */
+    .footer__divider {
+      border: none;
+      border-top: 1px solid var(--c-border);
+    }
+
+    /* Bottom bar */
+    .footer__bottom {
+      padding: var(--sp-6) 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer__legal {
+      font-size: 12px;
+      color: var(--c-text-muted);
+      line-height: 1.6;
+    }
+
+    .footer__legal strong {
+      color: var(--c-text-2);
+      font-weight: 600;
+    }
+
+    .footer__bottom-links {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-7);
+    }
+
+    .footer__bottom-link {
+      font-size: 12px;
+      color: var(--c-text-muted);
+      transition: color var(--t-fast);
+    }
+
+    .footer__bottom-link:hover {
+      color: var(--c-primary);
+    }
+
+
+    /* ===========================================================
+       RESPONSIVE
+    =========================================================== */
+    /* Tablet ≤ 1024px */
+    @media (max-width:1024px) {
+      .hero__inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .hero__preview {
+        max-width: 520px;
+        margin: 0 auto;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hosp-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .about__inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+
+      .dp-cards-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Mobile ≤ 768px */
+    @media (max-width:768px) {
+      .navbar__nav {
+        display: none;
+      }
+
+      .navbar__timestamp {
+        display: none;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .about__stats-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .dp-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dp-cards-row {
+        grid-template-columns: 1fr;
+      }
+
+      .alert-ts {
+        display: none;
+      }
+
+      .footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+
+      .info-strip__meta {
+        display: none;
+      }
+    }
+
+    /* Mobile portrait ≤ 520px */
+    @media (max-width:520px) {
+      .wrap {
+        padding-inline: var(--sp-5);
+      }
+
+      #home {
+        padding: 72px 0 64px;
+      }
+
+      .hero__h1 {
+        font-size: 26px;
+      }
+
+      .hero__sub {
+        font-size: 14px;
+      }
+
+      .btn-hero-primary,
+      .btn-hero-ghost {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero__cta-row {
+        flex-direction: column;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-card {
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px;
+      }
+
+      .stat-val {
+        font-size: 26px;
+      }
+
+      .hosp-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about__stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .dp-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer__grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .footer__bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .alert-btn {
+        display: none;
+      }
+
+      .btn-dash-cta {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       ── UPDATED ── NAVBAR  (now includes nav links + Login)
+  ============================================================ -->
+  <header>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <div class="wrap">
+        <div class="navbar__inner">
+
+          <!-- Brand -->
+          <a href="#home" class="navbar__brand" aria-label="AIIS – Home">
+            <div class="navbar__logo-box" aria-hidden="true">🏥</div>
+            <div class="navbar__brand-text">
+              <span class="navbar__name">AIIS</span>
+              <span class="navbar__tagline">Health Intelligence System</span>
+            </div>
+          </a>
+
+          <!-- ── NEW ── Nav links -->
+          <nav class="navbar__nav" aria-label="Page sections">
+            <a href="#home" class="navbar__nav-link active">Home</a>
+            <a href="#about" class="navbar__nav-link">About</a>
+            <a href="#dashboard" class="navbar__nav-link">Dashboard</a>
+          </nav>
+
+          <!-- Right: timestamp + login -->
+          <div class="navbar__right">
+            <div class="navbar__timestamp" aria-label="Last updated today at 09:42 AM">
+              <span class="navbar__live" aria-hidden="true"></span>
+              Last Updated:&nbsp;<strong>Today, 09:42 AM</strong>
+            </div>
+            <!-- ── NEW ── Login button -->
+            <a href="#" class="btn-login" aria-label="Login to AIIS">
+              🔐 Login
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- ============================================================
+         ── NEW ── #home — HERO SECTION
+    ============================================================ -->
+    <section id="home" aria-labelledby="hero-h1">
+      <div class="wrap">
+        <div class="hero__inner">
+
+          <!-- Left: copy -->
+          <div class="hero__copy">
+            <div class="hero__badge">
+              <span class="hero__badge-dot" aria-hidden="true"></span>
+              State Health Intelligence · Active
+            </div>
+
+            <h1 class="hero__h1" id="hero-h1">
+              AI-Powered 7–14 Day<br />
+              <em>Health Risk Intelligence</em>
+            </h1>
+
+            <p class="hero__sub">
+              Enabling proactive outbreak response and hospital strain forecasting
+              across the district — before crises develop.
+            </p>
+
+            <div class="hero__cta-row">
+              <a href="#dashboard" class="btn-hero-primary" aria-label="Go to the live dashboard">
+                ⬡ View Dashboard
+              </a>
+              <a href="#about" class="btn-hero-ghost" aria-label="Learn more about AIIS">
+                Learn More →
+              </a>
+            </div>
+          </div>
+
+          <!-- Right: floating dashboard preview card -->
+          <div class="hero__preview" aria-hidden="true">
+            <div class="hero__float-card">
+
+              <div class="hf-header">
+                <span class="hf-title">Risk Intelligence Overview</span>
+                <span class="hf-live">
+                  <span class="hf-live-dot"></span> Live
+                </span>
+              </div>
+
+              <div class="hf-metrics">
+                <div class="hf-metric">
+                  <div class="hf-metric-val">5</div>
+                  <div class="hf-metric-key">Hospitals</div>
+                </div>
+                <div class="hf-metric">
+                  <div class="hf-metric-val red">2</div>
+                  <div class="hf-metric-key">High Risk</div>
+                </div>
+                <div class="hf-metric">
+                  <div class="hf-metric-val green">1</div>
+                  <div class="hf-metric-key">Stable</div>
+                </div>
+              </div>
+
+              <div class="hf-bars">
+                <div class="hf-bar-row">
+                  <div class="hf-bar-label"><span>High Risk</span><span>78/100</span></div>
+                  <div class="hf-track">
+                    <div class="hf-fill high"></div>
+                  </div>
+                </div>
+                <div class="hf-bar-row">
+                  <div class="hf-bar-label"><span>Medium Risk</span><span>55/100</span></div>
+                  <div class="hf-track">
+                    <div class="hf-fill medium"></div>
+                  </div>
+                </div>
+                <div class="hf-bar-row">
+                  <div class="hf-bar-label"><span>Low Risk</span><span>32/100</span></div>
+                  <div class="hf-track">
+                    <div class="hf-fill low"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /hero__inner -->
+      </div><!-- /wrap -->
+    </section>
+    <!-- /#home -->
+
+
+    <!-- ============================================================
+         ── EXISTING ── STATS BAR
+    ============================================================ -->
+    <section class="stats-bar" aria-labelledby="stats-h">
+      <div class="wrap">
+        <h2 id="stats-h" class="sr-only">System Statistics</h2>
+        <div class="stats-grid" role="list">
+
+          <div class="stat-card stat-total" role="listitem" aria-label="5 total hospitals">
+            <div class="stat-icon" aria-hidden="true">🏥</div>
+            <div>
+              <div class="stat-val">5</div>
+              <div class="stat-lbl">Total Hospitals</div>
+              <div class="stat-sub">Actively monitored</div>
+            </div>
+          </div>
+
+          <div class="stat-card stat-high" role="listitem" aria-label="2 high risk hospitals">
+            <div class="stat-icon" aria-hidden="true">🔴</div>
+            <div>
+              <div class="stat-val">2</div>
+              <div class="stat-lbl">High Risk</div>
+              <div class="stat-sub">Immediate attention</div>
+            </div>
+          </div>
+
+          <div class="stat-card stat-medium" role="listitem" aria-label="2 medium risk hospitals">
+            <div class="stat-icon" aria-hidden="true">🟡</div>
+            <div>
+              <div class="stat-val">2</div>
+              <div class="stat-lbl">Medium Risk</div>
+              <div class="stat-sub">Elevated concern</div>
+            </div>
+          </div>
+
+          <div class="stat-card stat-low" role="listitem" aria-label="1 low risk hospital">
+            <div class="stat-icon" aria-hidden="true">🟢</div>
+            <div>
+              <div class="stat-val">1</div>
+              <div class="stat-lbl">Low Risk</div>
+              <div class="stat-sub">Within safe range</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================
+         ── EXISTING ── ALERT BANNER
+    ============================================================ -->
+    <div class="alert-wrap" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="wrap">
+        <div class="alert-banner">
+          <div class="alert-pulse" aria-hidden="true"></div>
+          <span class="alert-icon" aria-hidden="true">🔴</span>
+          <div class="alert-content">
+            <p class="alert-title">ALERT: City Hospital is at HIGH RISK — Escalation protocols recommended.</p>
+            <p class="alert-sub">Score: 78/100 · Predicted strain window: next 7–10 days</p>
+          </div>
+          <span class="alert-ts">Issued 09:42 AM · Today</span>
+          <button class="alert-btn" type="button">View Details →</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================================
+         HOSPITAL CARDS GRID (Dynamic via Jinja)
+    ============================================================ -->
+    <section class="hosp-section" aria-labelledby="hosp-h">
+      <div class="wrap">
+
+        <div class="info-strip" role="note">
+          <span aria-hidden="true">ℹ️</span>
+          <p>Risk scores are <strong>AI-generated predictions</strong> based on 7–14 day outbreak modeling and hospital
+            capacity telemetry.</p>
+          <span class="info-strip__meta">Model v3.2.1 · Confidence: 91%</span>
+        </div>
+
+        <div class="hosp-header">
+          <div>
+            <p class="eyebrow">Facility Intelligence</p>
+            <h2 class="section-h2" id="hosp-h">Hospital Risk Overview</h2>
+            <p class="section-sub">Predictive risk scores for all monitored facilities</p>
+          </div>
+          <span style="font-size:12px;font-family:var(--mono);color:var(--c-text-muted);">Showing {{ hospitals|length }}
+            facilities</span>
+        </div>
+
+        <div class="hosp-grid" role="list">
+
+          {% for h in hospitals %}
+          {% if h.score >= 70 %}
+          {% set risk = 'high' %}
+          {% set risk_label = 'HIGH' %}
+          {% elif h.score >= 40 %}
+          {% set risk = 'medium' %}
+          {% set risk_label = 'MEDIUM' %}
+          {% else %}
+          {% set risk = 'low' %}
+          {% set risk_label = 'LOW' %}
+          {% endif %}
+
+          <a href="/hospital/{{ h.id }}" class="hosp-card hosp-card--{{ risk }}" role="listitem"
+            aria-label="{{ h.name }}, {{ risk_label }} Risk, score {{ h.score }}"
+            style="text-decoration:none;display:flex;flex-direction:column;">
+            <div class="card-strip" aria-hidden="true"></div>
+            <div class="card-body" style="flex:1;display:flex;flex-direction:column;gap:16px;">
+              <div class="card-top">
+                <div class="card-name-wrap">
+                  <div class="card-icon" aria-hidden="true">🏥</div>
+                  <h3 class="card-name">{{ h.name }}</h3>
+                  <span class="card-loc">{{ h.city }} · {{ h.specialty }}</span>
+                </div>
+                <span class="badge badge--{{ risk }}"><span class="badge-dot" aria-hidden="true"></span>{{ risk_label
+                  }}</span>
+              </div>
+
+              <div class="score-wrap" aria-label="Risk score {{ h.score }} out of 100">
+                <p class="score-lbl">Risk Score</p>
+                <span class="score-num">{{ h.score }}</span>
+                <span class="score-denom">/ 100</span>
+                <div class="score-track" aria-hidden="true">
+                  <div class="score-fill" data-score="{{ h.score }}"></div>
+                </div>
+              </div>
+
+              <div class="meta-chips">
+                <div class="meta-chip">
+                  <div class="chip-v">{{ h.num_beds }}</div>
+                  <div class="chip-k">Total Beds</div>
+                </div>
+                <div class="meta-chip">
+                  <div class="chip-v">{{ h.num_doctors }}</div>
+                  <div class="chip-k">Doctors</div>
+                </div>
+                <div class="meta-chip">
+                  <div class="chip-v">{{ h.avg_wait_time }}m</div>
+                  <div class="chip-k">Wait Time</div>
+                </div>
+              </div>
+
+              <div class="btn-view-details {{ risk }}"
+                style="margin-top:auto;text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
+                View Details <span class="arrow">→</span>
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+
+        </div><!-- /hosp-grid -->
+      </div><!-- /wrap -->
+    </section>
+
+
+    <!-- ============================================================
+         ── NEW ── #about — ABOUT SECTION
+    ============================================================ -->
+    <section id="about" aria-labelledby="about-h">
+      <div class="wrap">
+        <div class="about__inner">
+
+          <!-- Left: copy + stats -->
+          <div class="about__copy">
+            <p class="eyebrow">About the Platform</p>
+            <h2 class="about__h2" id="about-h">
+              Built for the People<br />Who Protect Public Health
+            </h2>
+
+            <div class="about__body">
+              <p class="about__p">
+                <strong>AIIS – Advanced Integrated Intelligence System</strong> is a
+                state-level AI platform engineered to detect emerging health threats
+                <strong>7 to 14 days before they escalate</strong> into full-scale outbreaks.
+                By continuously analyzing hospital telemetry, disease surveillance feeds,
+                and population mobility data, AIIS generates actionable risk scores for
+                every monitored facility in the district.
+              </p>
+              <p class="about__p">
+                The platform serves <strong>district health officers, hospital administrators,
+                  and state epidemiology teams</strong> — giving decision-makers a unified
+                operational picture. Whether allocating surge capacity, deploying medical
+                personnel, or coordinating inter-hospital transfers, AIIS ensures every
+                action is evidence-based and timely.
+              </p>
+              <p class="about__p">
+                In a landscape where hours matter, AIIS replaces reactive crisis management
+                with <strong>precision-led, proactive public health governance</strong> —
+                protecting communities before the strain becomes visible.
+              </p>
+            </div>
+
+            <!-- Micro stats -->
+            <div class="about__stats-row" aria-label="Platform statistics">
+              <div class="about__stat">
+                <div class="about__stat-val">7–14</div>
+                <div class="about__stat-key">Day Forecast</div>
+              </div>
+              <div class="about__stat">
+                <div class="about__stat-val">91%</div>
+                <div class="about__stat-key">Model Accuracy</div>
+              </div>
+              <div class="about__stat">
+                <div class="about__stat-val">24/7</div>
+                <div class="about__stat-key">Monitoring</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: feature cards -->
+          <div class="about__features">
+
+            <div class="feat-card">
+              <div class="feat-icon-box" aria-hidden="true">📈</div>
+              <div class="feat-info">
+                <h3 class="feat-title">Predictive Analytics</h3>
+                <p class="feat-desc">
+                  Machine learning models trained on multi-year outbreak data produce
+                  risk scores with a 91% confidence interval — giving health officials
+                  a reliable forecast window before strain becomes critical.
+                </p>
+              </div>
+            </div>
+
+            <div class="feat-card">
+              <div class="feat-icon-box" aria-hidden="true">🗺️</div>
+              <div class="feat-info">
+                <h3 class="feat-title">District Risk Heatmaps</h3>
+                <p class="feat-desc">
+                  Interactive geographic risk overlays visualize outbreak probability
+                  zones across the district, enabling field teams to prioritize
+                  containment and surge support at the right locations.
+                </p>
+              </div>
+            </div>
+
+            <div class="feat-card">
+              <div class="feat-icon-box" aria-hidden="true">🏥</div>
+              <div class="feat-info">
+                <h3 class="feat-title">Hospital Strain Monitoring</h3>
+                <p class="feat-desc">
+                  Real-time occupancy, ICU availability, staffing, and supply chain
+                  metrics feed directly into the risk model — providing a composite
+                  strain score that reflects true operational pressure on each facility.
+                </p>
+              </div>
+            </div>
+
+          </div><!-- /about__features -->
+
+        </div><!-- /about__inner -->
+      </div><!-- /wrap -->
+    </section>
+    <!-- /#about -->
+
+
+    <!-- ============================================================
+         ── NEW ── #dashboard — DASHBOARD PREVIEW SECTION
+    ============================================================ -->
+    <section id="dashboard" aria-labelledby="dash-h">
+      <div class="wrap">
+
+        <!-- Intro text -->
+        <div class="dash-preview__intro">
+          <span class="eyebrow">Live Monitoring</span>
+          <h2 class="dash-preview__h2" id="dash-h">
+            Live Risk Monitoring Dashboard
+          </h2>
+          <p class="dash-preview__desc">
+            The AIIS dashboard delivers a real-time consolidated view of hospital
+            risk across all monitored facilities — refreshed every 30 minutes with
+            the latest predictive model output.
+          </p>
+        </div>
+
+        <!-- Framed dashboard preview -->
+        <div class="dash-preview__frame-wrap" aria-label="Dashboard interface preview" role="img">
+
+          <!-- Fake browser chrome bar -->
+          <div class="dash-chrome" aria-hidden="true">
+            <div class="dash-chrome__dots">
+              <span class="chrome-dot"></span>
+              <span class="chrome-dot"></span>
+              <span class="chrome-dot"></span>
+            </div>
+            <div class="dash-chrome__bar">https://aiis.statehealth.gov/dashboard</div>
+          </div>
+
+          <!-- Dashboard preview body -->
+          <div class="dash-preview__body" aria-hidden="true">
+
+            <!-- Mini navbar -->
+            <div class="dp-topbar">
+              <span class="dp-topbar-brand">🏥 AIIS – Hospital Risk Dashboard</span>
+              <span class="dp-topbar-status">
+                <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;display:inline-block;"></span>
+                Live · 09:42 AM
+              </span>
+            </div>
+
+            <!-- Mini stats -->
+            <div class="dp-stats-row">
+              <div class="dp-stat">
+                <div class="dp-stat-val blue">5</div>
+                <div class="dp-stat-lbl">Hospitals</div>
+              </div>
+              <div class="dp-stat">
+                <div class="dp-stat-val red">2</div>
+                <div class="dp-stat-lbl">High Risk</div>
+              </div>
+              <div class="dp-stat">
+                <div class="dp-stat-val amber">2</div>
+                <div class="dp-stat-lbl">Medium Risk</div>
+              </div>
+              <div class="dp-stat">
+                <div class="dp-stat-val green">1</div>
+                <div class="dp-stat-lbl">Low Risk</div>
+              </div>
+            </div>
+
+            <!-- Mini hospital cards -->
+            <div class="dp-cards-row">
+              <div class="dp-card">
+                <div class="dp-card-top">
+                  <span class="dp-card-name">City Hospital</span>
+                  <span class="dp-card-badge high">HIGH</span>
+                </div>
+                <div class="dp-score high">78</div>
+                <div class="dp-track">
+                  <div class="dp-fill high"></div>
+                </div>
+              </div>
+              <div class="dp-card">
+                <div class="dp-card-top">
+                  <span class="dp-card-name">Apollo Public</span>
+                  <span class="dp-card-badge medium">MED</span>
+                </div>
+                <div class="dp-score medium">55</div>
+                <div class="dp-track">
+                  <div class="dp-fill medium"></div>
+                </div>
+              </div>
+              <div class="dp-card">
+                <div class="dp-card-top">
+                  <span class="dp-card-name">Civil Hospital</span>
+                  <span class="dp-card-badge low">LOW</span>
+                </div>
+                <div class="dp-score low">32</div>
+                <div class="dp-track">
+                  <div class="dp-fill low"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini alert bar -->
+            <div class="dp-alert-bar">
+              <div class="dp-alert-dot"></div>
+              🔴 ALERT: City Hospital is at HIGH RISK — Immediate escalation recommended.
+            </div>
+
+          </div><!-- /dash-preview__body -->
+        </div><!-- /dash-preview__frame-wrap -->
+
+        <!-- CTA -->
+        <div class="dash-preview__cta">
+          <a href="home.html" class="btn-dash-cta" aria-label="Open the full AIIS dashboard">
+            Go to Full Dashboard
+            <span class="arrow">→</span>
+          </a>
+        </div>
+
+      </div><!-- /wrap -->
+    </section>
+    <!-- /#dashboard -->
+
+
+  </main>
+
+
+  <!-- ============================================================
+       ── NEW ── FOOTER  (professional minimal)
+  ============================================================ -->
+  <footer role="contentinfo">
+    <div class="footer__main">
+      <div class="wrap">
+        <div class="footer__grid">
+
+          <!-- Col 1: Brand -->
+          <div class="footer__brand-col">
+            <div class="footer__logo-row">
+              <div class="footer__logo-box" aria-hidden="true">🏥</div>
+              <div>
+                <div class="footer__brand-name">AIIS</div>
+                <div class="footer__brand-sub">State Health Intelligence Platform</div>
+              </div>
+            </div>
+            <p class="footer__desc">
+              Advanced Integrated Intelligence System — delivering AI-powered
+              7–14 day health risk forecasting to state-level public health authorities.
+            </p>
+            <div class="footer__status-chip" aria-label="System status: operational">
+              <span class="footer__status-dot" aria-hidden="true"></span>
+              All Systems Operational
+            </div>
+          </div>
+
+          <!-- Col 2: Platform -->
+          <div>
+            <p class="footer__col-head">Platform</p>
+            <ul class="footer__col-links">
+              <li><a href="#home" class="footer__col-link">Home</a></li>
+              <li><a href="#about" class="footer__col-link">About AIIS</a></li>
+              <li><a href="#dashboard" class="footer__col-link">Dashboard</a></li>
+              <li><a href="home.html" class="footer__col-link">Hospital Monitor</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Resources -->
+          <div>
+            <p class="footer__col-head">Resources</p>
+            <ul class="footer__col-links">
+              <li><a href="#" class="footer__col-link">Documentation</a></li>
+              <li><a href="#" class="footer__col-link">Data Methodology</a></li>
+              <li><a href="#" class="footer__col-link">Model Reports</a></li>
+              <li><a href="#" class="footer__col-link">API Reference</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 4: Authority -->
+          <div>
+            <p class="footer__col-head">Authority</p>
+            <ul class="footer__col-links">
+              <li><a href="#" class="footer__col-link">Privacy Policy</a></li>
+              <li><a href="#" class="footer__col-link">Data Usage</a></li>
+              <li><a href="#" class="footer__col-link">Accessibility</a></li>
+              <li><a href="#" class="footer__col-link">Contact</a></li>
+            </ul>
+          </div>
+
+        </div><!-- /footer__grid -->
+      </div><!-- /wrap -->
+    </div><!-- /footer__main -->
+
+    <hr class="footer__divider" />
+
+    <div class="wrap">
+      <div class="footer__bottom">
+        <p class="footer__legal">
+          © 2025 <strong>AIIS – State Health Intelligence Platform</strong>.
+          All rights reserved. For authorized government health officials only.<br />
+          Data is predictive and intended for planning and decision-support purposes only.
+        </p>
+        <nav class="footer__bottom-links" aria-label="Legal links">
+          <a href="#" class="footer__bottom-link">Privacy</a>
+          <a href="#" class="footer__bottom-link">Terms</a>
+          <a href="#" class="footer__bottom-link">Accessibility</a>
+          <a href="#" class="footer__bottom-link">Contact</a>
+        </nav>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- ===========================================================
+       MINIMAL SCRIPT: Active nav link highlight on scroll
+  =========================================================== -->
+  <script>
+    (function () {
+      var sections = ['home', 'about', 'dashboard'];
+      var links = document.querySelectorAll('.navbar__nav-link');
+      function onScroll() {
+        var scrollY = window.scrollY + 80;
+        var current = 'home';
+        sections.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el && el.offsetTop <= scrollY) current = id;
+        });
+        links.forEach(function (l) {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+        });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+
+    // Apply score-fill widths from data-score (keeps Jinja out of CSS, silences linter)
+    document.querySelectorAll('.score-fill[data-score]').forEach(function (el) {
+      el.style.width = el.dataset.score + '%';
+    });
+  </script>
+
+</body>
+
+</html>

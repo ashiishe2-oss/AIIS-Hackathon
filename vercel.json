@@ -1,0 +1,22 @@
+{
+  "framework": null,
+  "buildCommand": null,
+  "installCommand": null,
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 30,
+      "includeFiles": "{backend_v2/**,frontend/templates/**,frontend/static/**}"
+    }
+  },
+  "headers": [
+    { "source": "/vendor/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/(.*)", "headers": [{ "key": "Permissions-Policy", "value": "geolocation=(self)" }] }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/(login|register|logout|hospital_dashboard|authority_dashboard|public|emergency)", "destination": "/api/index" },
+    { "source": "/hospital/(.*)", "destination": "/api/index" },
+    { "source": "/static/(.*)", "destination": "/api/index" }
+  ]
+}

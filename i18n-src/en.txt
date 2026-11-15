@@ -1,0 +1,368 @@
+Skip to content
+Hospital help
+Home
+Emergency
+Book a visit
+My requests
+Sign in
+Call
+Book visit
+AIIS home
+Main
+Patient sign in (optional)
+Call ambulance 108
+Close
+Account
+AIIS: {0}
+Find hospital care fast
+Emergency care near you
+Your hospital request
+Book a doctor visit
+Hospital capacity
+Strain Risk Index
+Patient Sign In
+Need a hospital?
+Find a hospital or call an ambulance now
+Not an emergency
+AIIS does not replace emergency services.
+If a life is at risk, call 108 or 112 first. Hospital locations and phone numbers checked {0} against each hospital's website and Google Maps listing. Bed numbers can change fast, so call before you go if you can.
+For hospital staff:
+Update beds
+Shake for help settings
+Your location, near {0}
+Your current location
+GPS {0} · live
+GPS {0}
+({0} so far)
+Location found ({0})
+Update
+Change
+Finding your exact location
+Location is blocked for this site.
+To see the hospitals closest to you, allow location: tap the lock or settings icon next to the web address, set Location to
+Allow
+, then tap Try again.
+Try again
+Choose area
+Could not get a GPS fix. Move near a window or outdoors and try again.
+Location needs a secure (https) connection.
+Showing hospitals near
+. Turn on location to see the ones closest to you.
+Use my exact location
+This browser cannot share your location. Choose your area instead.
+Location is blocked. Allow it in your browser settings, or choose your area.
+Where are you?
+We sort hospitals by travel time from here.
+Use my current location
+Or choose your area
+Type an area name
+No matching area. Try a different spelling.
+Bengaluru Central
+Near your location
+Near {0}
+If a life is at risk, call an ambulance first.
+{0} nearest emergency hospitals
+{0} nearest emergency hospital
+Nearest to you
+About {0} min
+away, {0} km
+Travel time unknown
+24x7 emergency for all emergencies
+24x7 emergency
+Specialty hospital
+Specialty
+Heart only
+Brain and nerves only
+Accidents and injuries
+Children only
+Pregnancy and newborns
+Heart emergencies only
+Brain, nerve and mental health emergencies only
+Accidents, fractures and injuries
+Pregnancy, childbirth and newborns
+Eye emergencies only
+Free beds
+call to check
+{0} free
+No free
+emergency beds
+emergency bed
+ICU beds
+ICU bed
+(of {0})
+of {0}
+not reported
+{0}: not reported
+Sample bed numbers. Call the hospital to confirm.
+No verified phone number. Call 108 for an ambulance.
+Number from a public list. If no one answers, call 108.
+Ambulance
+Apollo emergency helpline
+Appointments
+Casualty
+Emergency (mobile)
+Emergency (toll free)
+Emergency and ambulance
+Emergency department
+Emergency helpline
+Emergency helpline (second line)
+Helpline
+Hospital
+Hospital (24x7)
+Hospital (second line)
+Phone
+Call hospital
+Directions
+Tell them I'm coming
+Address and all phone numbers
+See all nearby hospitals
+Locations and numbers checked {0}.
+Locations and numbers checked {0}. Beds updated {1}.
+Demo data
+More hospitals nearby
+No emergency beds free
+{0} emergency beds free
+{0} emergency bed free
+{0} min
+Call {0}
+Call {0} to book
+No verified number for {0}. Call 108
+Call 108
+No hospitals found nearby. Call 108 for an ambulance.
+No hospitals found near here
+Try another area, or call 108 for an ambulance.
+Change area
+Loading hospitals
+Loading
+Could not load hospitals
+No connection. Check your internet and try again.
+Something went wrong. Please try again.
+just now
+{0} min ago
+{0} h ago
+Private
+Government
+Any emergency
+Chest pain or heart
+Stroke signs
+Accident or injury
+Breathing trouble
+Child emergency
+Burns
+Beds right now
+This hospital does not share live bed numbers yet. Call the number below to check before you go.
+Why it is listed here
+About {0} min away ({1} km in a straight line)
+Live bed numbers not shared. Call to check.
+Bed numbers are sample (demo) values. Call to confirm.
+{0} emergency beds free, reported by the hospital
+Hospital reports no emergency beds free
+Hospital in {0}
+Phone numbers
+Source: {0}
+Source: {0}, checked {1}
+{0} (official)
+{0} (Google listing)
+Held for people on the way
+Published by the hospital {0}
+recently
+ICU
+Departments and doctors on duty
+Departments
+Equipment
+Available
+Not available
+Unknown
+Government hospital. This number is from a public list, not the hospital's own website, and may not be answered. If no one picks up, call 108.
+Tell {0} you are coming?
+Their emergency desk gets an alert and holds a bed for about {0} minutes while you travel.
+We only send your area and travel time. No name or phone number is needed.
+Yes, tell them
+Cancel
+This is not a guaranteed bed or admission. If the patient gets worse, call 108.
+Sent. The hospital knows you are coming.
+{0} is not connected to AIIS yet. Please call them directly.
+Hospitals
+Request sent
+The hospital is checking
+Hospital is checking
+The hospital is expecting you
+Bed held for you
+Show your code at the desk
+You have arrived
+Arrived
+Request cancelled
+The bed hold has ended
+Your details reached the casualty desk
+Staff look at free beds and doctors on duty
+Travel now and show your code at the desk
+Desk staff confirm you with the code
+The held bed went back to the hospital for other patients.
+The hold time ran out and the bed was released. You can still go to the hospital or send a new request.
+Find a hospital again
+Bed hold time left, including 15 minutes extra
+Show this at the casualty desk
+Your code {0}
+Staff can scan the square or type the code.
+Checked in at the desk
+The hospital team will take it from here.
+Need help?
+Call 108 for an ambulance if the patient's condition is serious.
+Call casualty desk
+Send to family on WhatsApp
+Cancel request
+For desk staff: confirm arrival
+A hospital reply is not a guaranteed bed or admission. If the patient gets worse on the way, call 108.
+No active request
+Find a hospital and tap Tell them I'm coming.
+Find emergency care
+Request not found
+It may have ended. You can find a hospital again.
+Time left on bed hold
+Cancel this request?
+The held bed goes back to the hospital for other patients.
+Yes, cancel request
+Keep my request
+Request cancelled. The bed was released.
+Confirm arrival
+For casualty desk staff. Type the 4 digit code the patient shows you.
+Arrival code
+Arrival confirmed
+We are going to {0} for an emergency.
+Address: {0}.
+Hospital phone: {0}.
+Map: {0}
+What do you need?
+Pick one. You can change it later.
+See a specialist doctor
+Heart, bones, skin, children and more
+General check-up
+Fever, cough, a routine visit
+Tests and scans
+Blood tests, X-ray, CT, MRI
+Planned surgery or procedure
+Choose the type of care next
+Find a hospital by name
+Search any hospital near you
+Which kind of doctor?
+Plain words first. The medical name is underneath.
+Heart
+Cardiology
+Cancer care
+Oncology
+Bones and joints
+Orthopaedics
+Brain and nerves
+Neurology
+Skin, hair and nails
+Dermatology
+Children
+Paediatrics
+Women's health and pregnancy
+Obstetrics and Gynaecology
+General physician
+General Medicine
+Not sure
+Show all hospitals
+Back
+Where should we look?
+Looking for {0}. Closest first.
+Looking at all hospitals. Closest first.
+Finding your location
+Using your current location
+Type of hospital
+Any
+Hospital name
+(optional)
+For example: Manipal
+Show hospitals
+Hospitals for {0}
+Hospitals near you
+Near you
+All care
+, about {0} min
+doctor
+doctors
+Next opening in about
+{0} day
+{0} days
+Request visit
+Call to book
+Book on website
+Details
+No hospitals match yet
+Try a different area, or choose All care.
+Start again
+Call the hospital to book a visit. AIIS shows real hospitals and their own phone numbers; it does not invent doctor counts or waiting times.
+Request an appointment
+Which day?
+Tmrw
+What time suits you?
+Morning
+Afternoon
+Evening
+Morning 9 to 12, afternoon 12 to 4, evening 4 to 8.
+Patient name
+Phone number
+10 digit mobile number
+The hospital calls this number to confirm.
+Remember my name and number on this phone
+This is a request, not a confirmed booking. The hospital will call you to fix the exact time.
+Send request
+Please add the patient name.
+Please check the phone number. It needs 10 digits.
+{0} will call
+to confirm a time on {0}, {1}.
+Reference {0}
+My visits
+Done
+Visit request cancelled
+Details saved on this phone
+Signed in
+Sign out
+Want your requests on every device?
+Optional. Sign in or create an account.
+Emergency bed hold
+No active request. In an emergency, tap Emergency on the home screen and call the nearest hospital or 108.
+Doctor visit requests
+No visits booked yet
+Requests you send to hospitals show up here.
+Waiting for hospital call
+Confirmed
+Cancelled
+Consultation
+General consultation
+Your name and phone number are saved on this phone to fill forms faster.
+Remove them
+Your name and number were removed from this phone
+Create your account
+Optional. Emergency help, hospital calls and directions never need an account. Signing in keeps your visit requests and details on any device.
+Create account
+Continue with Google
+or with email
+Full name
+Mobile number
+Email
+Password
+Show
+Hide
+Show password
+At least 8 characters.
+Continue without signing in
+Please add your name.
+Please check your email address.
+Password needs at least 8 characters.
+Please enter your email and password.
+Sign in failed. Please try again.
+Email or password is incorrect.
+An account with this email already exists. Sign in instead.
+Authentication failed.
+Signed out.
+Google sign-in was cancelled.
+Signed in with Google!
+Welcome back, {0}!
+Account created! Welcome, {0}.
+Signed in with Google! Welcome, {0}.
+Signed in as {0}
+Patient
+Hospital names and addresses stay in English, the way they appear on signboards and Google Maps.

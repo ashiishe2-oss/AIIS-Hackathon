@@ -1,0 +1,715 @@
+{
+ "checked": "2026-11-14",
+ "method": "Each location was matched to the hospital's own Google Maps place listing; coordinates are that listing's pin. Phone numbers come from the hospital's official website where available, otherwise from its Google Maps listing.",
+ "hospitals": {
+  "1": {
+   "name": "Victoria Hospital",
+   "address": "Mysore Rd, near City Market, New Tharagupet, Bengaluru, Karnataka 560002",
+   "lat": 12.9643083,
+   "lng": 77.5754198,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Casualty",
+     "number": "080 2670 1150",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "2": {
+   "name": "Bowring and Lady Curzon Hospital",
+   "address": "Lady Curzon Rd, Shivaji Nagar, Bengaluru, Karnataka 560001",
+   "lat": 12.9821629,
+   "lng": 77.6042677,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "084311 86388",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    },
+    {
+     "label": "Hospital (second line)",
+     "number": "080 2559 1325",
+     "source": "Public hospital list (rrce.org)"
+    }
+   ]
+  },
+  "3": {
+   "name": "ESIC Model Hospital, Rajajinagar",
+   "address": "961-965, ESI Hospital Main Rd, Rajajinagar, Bengaluru, Karnataka 560010",
+   "lat": 12.9904295,
+   "lng": 77.5537039,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "080 2332 5130",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "4": {
+   "name": "K.C. General Hospital",
+   "address": "Malleswaram Circle, Police Station Rd, Malleswaram, Bengaluru, Karnataka 560003",
+   "lat": 12.9961428,
+   "lng": 77.569358,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "080 2334 1771",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    },
+    {
+     "label": "Hospital (second line)",
+     "number": "080 2334 3791",
+     "source": "Public hospital list (rrce.org)"
+    }
+   ]
+  },
+  "5": {
+   "name": "Minto Ophthalmic Hospital",
+   "address": "Tippu Sultan Palace Rd, Chamrajpet, opposite V.V. Puram Police Station, Bengaluru, Karnataka 560002",
+   "lat": 12.9609676,
+   "lng": 77.5721981,
+   "emergencyScope": "eye",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "080 2670 7176",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "6": {
+   "name": "Indira Gandhi Institute of Child Health",
+   "address": "1st Block, Siddapura, Jayanagar, Bengaluru, Karnataka 560011",
+   "lat": 12.9374558,
+   "lng": 77.5920528,
+   "emergencyScope": "children",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "080 2244 3143",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    },
+    {
+     "label": "Hospital (second line)",
+     "number": "080 2634 3143",
+     "source": "Public hospital list (rrce.org)"
+    }
+   ]
+  },
+  "7": {
+   "name": "Vani Vilas Hospital",
+   "address": "Victoria Hospital Compound, Sultan Rd, Kalasipalya, Bengaluru, Karnataka 560002",
+   "lat": 12.9614477,
+   "lng": 77.5740093,
+   "emergencyScope": "maternity",
+   "phones": [
+    {
+     "label": "Emergency helpline",
+     "number": "080 2670 5206",
+     "source": "Hospital website, reported by Deccan Herald"
+    },
+    {
+     "label": "Emergency helpline (second line)",
+     "number": "080 2670 5204",
+     "source": "Hospital website, reported by Deccan Herald"
+    }
+   ]
+  },
+  "8": {
+   "name": "General Hospital, Yelahanka",
+   "address": "Railway Station Rd, Gandhi Nagar, Yelahanka, Bengaluru, Karnataka 560064",
+   "lat": 13.0995088,
+   "lng": 77.5963363,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "9": {
+   "name": "General Hospital, Anekal",
+   "address": "Thali Rd, Weaver Colony, Anekal, Karnataka 562106",
+   "lat": 12.7092899,
+   "lng": 77.6957698,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "10": {
+   "name": "General Hospital, Devanahalli",
+   "address": "SH 96, Devanahalli Town, Karnataka 562110",
+   "lat": 13.2568568,
+   "lng": 77.7274598,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "11": {
+   "name": "Government General Hospital, Nelamangala",
+   "address": "Jayanagara, Nelamangala Town, Karnataka 562123",
+   "lat": 13.0986559,
+   "lng": 77.3913517,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "12": {
+   "name": "Krishna Rajendra (K.R.) Hospital",
+   "address": "Irwin Rd, Devaraja Mohalla, Mysuru, Karnataka 570001",
+   "lat": 12.3140248,
+   "lng": 76.6507101,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "0821 252 6200",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "14": {
+   "name": "Cheluvamba Hospital",
+   "address": "K.R. Hospital Compound, Irwin Rd, opposite Mysore Medical College, Mysuru, Karnataka 570001",
+   "lat": 12.3141191,
+   "lng": 76.6493079,
+   "emergencyScope": "maternity",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "0821 252 0512",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "15": {
+   "name": "District Hospital, Mysuru",
+   "address": "KRS Rd, near Metagalli, Hebbal 1st Stage, Mysuru, Karnataka 570016",
+   "lat": 12.349812,
+   "lng": 76.6283509,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "0821 251 7555",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "16": {
+   "name": "Government Hospital, Nanjangud",
+   "address": "Nanjangud, Karnataka 571301",
+   "lat": 12.127678,
+   "lng": 76.6811549,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "17": {
+   "name": "BIMS Hospital (Belagavi Institute of Medical Sciences)",
+   "address": "BIMS Road, Nagar, Belagavi, Karnataka 590001",
+   "lat": 15.8705582,
+   "lng": 74.5116567,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "18": {
+   "name": "Civil Hospital (District Hospital), Belagavi",
+   "address": "Kittur Rani Chennamma Circle, Khade Bazar, Sadashiv Nagar, Belagavi, Karnataka 590001",
+   "lat": 15.8683106,
+   "lng": 74.5113339,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "0831 249 1071",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "19": {
+   "name": "ESI Hospital, Belagavi",
+   "address": "Ashok Nagar, Shivaji Nagar, Belagavi, Karnataka 590016",
+   "lat": 15.872101,
+   "lng": 74.5268217,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "20": {
+   "name": "Government Hospital, Gokak",
+   "address": "Gokak Falls Rd, Gokak, Karnataka 591307",
+   "lat": 16.1625354,
+   "lng": 74.8149955,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "21": {
+   "name": "KIMS Hospital, Hubballi",
+   "address": "Vidya Nagar, Hubballi, Karnataka 580021",
+   "lat": 15.3619318,
+   "lng": 75.1319413,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "0836 237 0057",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "22": {
+   "name": "District Hospital, Dharwad",
+   "address": "Fort, Maratha Colony, Dharwad, Karnataka 580008",
+   "lat": 15.4637625,
+   "lng": 75.0099844,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "23": {
+   "name": "ESI Hospital, Hubballi",
+   "address": "Karwar Rd, Heggeri Colony, Old Hubli, Hubballi, Karnataka 580024",
+   "lat": 15.3403212,
+   "lng": 75.1270836,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "25": {
+   "name": "Wenlock District Hospital",
+   "address": "Hampankatta, Mangaluru, Karnataka 575001",
+   "lat": 12.867179,
+   "lng": 74.8425321,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "26": {
+   "name": "Lady Goschen Hospital",
+   "address": "Maidan Rd, Bhavathi, Hampankatta, Mangaluru, Karnataka 575001",
+   "lat": 12.8652044,
+   "lng": 74.8385711,
+   "emergencyScope": "maternity",
+   "phones": []
+  },
+  "27": {
+   "name": "Gulbarga Institute of Medical Sciences (GIMS)",
+   "address": "District Hospital Campus, Sedam Rd, Kalaburagi, Karnataka 585105",
+   "lat": 17.3296026,
+   "lng": 76.8399294,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "28": {
+   "name": "District Government Hospital, Kalaburagi",
+   "address": "Kuvempu Nagar, Kalaburagi, Karnataka 585105",
+   "lat": 17.3286848,
+   "lng": 76.8407434,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "29": {
+   "name": "Chigateri District Hospital",
+   "address": "Chigateri General Hospital Rd, Davanagere, Karnataka 577004",
+   "lat": 14.4582065,
+   "lng": 75.9168936,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "31": {
+   "name": "VIMS Hospital (Ballari Medical College and Research Centre)",
+   "address": "Vijaya Nagar, Cantonment, Ballari, Karnataka 583104",
+   "lat": 15.1529479,
+   "lng": 76.8966905,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "32": {
+   "name": "District Hospital, Ballari",
+   "address": "Satyanarayana Pete, Ballari, Karnataka 583101",
+   "lat": 15.1443869,
+   "lng": 76.934778,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "33": {
+   "name": "District Hospital, Tumakuru",
+   "address": "Ward No. 18, Tumakuru, Karnataka 572101",
+   "lat": 13.3399985,
+   "lng": 77.1000114,
+   "emergencyScope": "general",
+   "phones": []
+  },
+  "35": {
+   "name": "McGann Teaching District Hospital (SIMS)",
+   "address": "Mission Compound, Shivamogga, Karnataka 577201",
+   "lat": 13.9353085,
+   "lng": 75.5628577,
+   "emergencyScope": "general",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "08182 229933",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  }
+ },
+ "hidden": {
+  "13": "Duplicate: 'KIMS Mysuru' is not a separate hospital; the Mysore Medical College teaching hospital is K.R. Hospital (id 12).",
+  "24": "Not a hospital: Google Maps resolves this name to Kittur Rani Chennamma Circle (a landmark) in Hubballi.",
+  "30": "Duplicate: the Davanagere district hospital is Chigateri District Hospital (id 29).",
+  "34": "Could not verify a government 'Tumakuru Medical College Hospital'; the nearest match is a private college.",
+  "36": "Duplicate: McGann District Hospital is the SIMS teaching hospital (id 35)."
+ },
+ "directory": {
+  "101": {
+   "name": "NIMHANS",
+   "address": "Hosur Main Road, Lakkasandra, Wilson Garden, Bengaluru, Karnataka 560029",
+   "lat": 12.9407387,
+   "lng": 77.598407,
+   "emergencyScope": "neuro",
+   "sector": "Government",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Hospital",
+     "number": "080 2699 5000",
+     "source": "Public emergency list (karetrip.com)"
+    },
+    {
+     "label": "Hospital (second line)",
+     "number": "080 2699 5530",
+     "source": "Google Maps place listing (checked 14 Nov 2026)"
+    }
+   ]
+  },
+  "102": {
+   "name": "Sanjay Gandhi Institute of Trauma & Orthopaedics",
+   "address": "Byrasandra Main Rd, behind NIMHANS, Jayanagar East, Bengaluru, Karnataka 560011",
+   "lat": 12.9360258,
+   "lng": 77.5937768,
+   "emergencyScope": "trauma",
+   "sector": "Government",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency helpline",
+     "number": "080 2656 4516",
+     "source": "sgito.org (official)"
+    }
+   ]
+  },
+  "103": {
+   "name": "Sri Jayadeva Institute of Cardiovascular Sciences",
+   "address": "Bannerghatta Rd, Jayanagar 9th Block, Bengaluru, Karnataka 560069",
+   "lat": 12.9178903,
+   "lng": 77.5992075,
+   "emergencyScope": "cardiac",
+   "sector": "Government",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency helpline",
+     "number": "080 2297 7202",
+     "source": "jayadevacardiology.com (official)"
+    }
+   ]
+  },
+  "104": {
+   "name": "St. John's Medical College Hospital",
+   "address": "Sarjapur Road, Koramangala, Bengaluru, Karnataka 560034",
+   "lat": 12.9295368,
+   "lng": 77.6186969,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Hospital (24x7)",
+     "number": "080 2206 5000",
+     "source": "stjohns.in (official)"
+    },
+    {
+     "label": "Hospital (second line)",
+     "number": "080 2206 5001",
+     "source": "stjohns.in (official)"
+    }
+   ]
+  },
+  "105": {
+   "name": "Manipal Hospital, Old Airport Road",
+   "address": "98, HAL Old Airport Rd, Kodihalli, Bengaluru, Karnataka 560017",
+   "lat": 12.9590284,
+   "lng": 77.649205,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency",
+     "number": "080 2222 1111",
+     "source": "manipalhospitals.com (official)"
+    },
+    {
+     "label": "Appointments",
+     "number": "1800 102 5555",
+     "source": "manipalhospitals.com (official)"
+    }
+   ]
+  },
+  "106": {
+   "name": "Manipal Hospital, Whitefield",
+   "address": "ITPL Main Rd, opposite Prestige Shantiniketan, Whitefield, Bengaluru, Karnataka 560066",
+   "lat": 12.9880554,
+   "lng": 77.7287744,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency",
+     "number": "080 2222 1111",
+     "source": "manipalhospitals.com (official)"
+    },
+    {
+     "label": "Appointments",
+     "number": "1800 102 5555",
+     "source": "manipalhospitals.com (official)"
+    }
+   ]
+  },
+  "107": {
+   "name": "Manipal Hospital, Malleshwaram",
+   "address": "71, 11th Main Rd, opposite Railway Station, Malleshwaram, Bengaluru, Karnataka 560003",
+   "lat": 13.0010109,
+   "lng": 77.5639598,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency",
+     "number": "080 2222 1111",
+     "source": "manipalhospitals.com (official)"
+    },
+    {
+     "label": "Appointments",
+     "number": "1800 102 5555",
+     "source": "manipalhospitals.com (official)"
+    }
+   ]
+  },
+  "108": {
+   "name": "Sakra World Hospital",
+   "address": "SY No 52/2 & 52/3, Devarabeesanahalli, Outer Ring Rd, Bellandur, Bengaluru, Karnataka 560103",
+   "lat": 12.9323284,
+   "lng": 77.6851884,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency",
+     "number": "080 4962 4962",
+     "source": "sakraworldhospital.com (official)"
+    },
+    {
+     "label": "Hospital",
+     "number": "080 4969 4969",
+     "source": "sakraworldhospital.com (official)"
+    }
+   ]
+  },
+  "109": {
+   "name": "Fortis Hospital, Bannerghatta Road",
+   "address": "154/9, Bannerghatta Rd, opposite IIM-B, Bengaluru, Karnataka 560076",
+   "lat": 12.8948217,
+   "lng": 77.5986197,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency and ambulance",
+     "number": "96860 96860",
+     "source": "fortishealthcare.com (official)"
+    }
+   ]
+  },
+  "110": {
+   "name": "Apollo Hospitals, Bannerghatta Road",
+   "address": "154/11, Bannerghatta Rd, opposite IIM-B, Bengaluru, Karnataka 560076",
+   "lat": 12.8961976,
+   "lng": 77.5985971,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency department",
+     "number": "080 4668 8098",
+     "source": "apollohospitals.com (official)"
+    },
+    {
+     "label": "Apollo emergency helpline",
+     "number": "1066",
+     "source": "apollohospitals.com (official)"
+    }
+   ]
+  },
+  "111": {
+   "name": "Aster CMI Hospital",
+   "address": "43/2, New Airport Road, NH 44, Sahakar Nagar, Hebbal, Bengaluru, Karnataka 560092",
+   "lat": 13.054497,
+   "lng": 77.5915659,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency",
+     "number": "080 4647 4647",
+     "source": "asterhospitals.in (official)"
+    },
+    {
+     "label": "Helpline",
+     "number": "080 4342 0100",
+     "source": "asterhospitals.in (official)"
+    }
+   ]
+  },
+  "112": {
+   "name": "Ramaiah Memorial Hospital",
+   "address": "New BEL Rd, M S Ramaiah Nagar, Bengaluru, Karnataka 560054",
+   "lat": 13.0283322,
+   "lng": 77.5697841,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency (toll free)",
+     "number": "1800 123 1133",
+     "source": "msrmh.com (official)"
+    },
+    {
+     "label": "Ambulance",
+     "number": "080 4050 3010",
+     "source": "msrmh.com (official)"
+    }
+   ]
+  },
+  "113": {
+   "name": "Narayana Health City",
+   "address": "258/A, Hosur Rd, Bommasandra Industrial Area, Bengaluru, Karnataka 560099",
+   "lat": 12.8093547,
+   "lng": 77.6951014,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency (toll free)",
+     "number": "1800 309 0309",
+     "source": "narayanahealth.org (official)"
+    },
+    {
+     "label": "Emergency (mobile)",
+     "number": "97384 97384",
+     "source": "Narayana Health press release"
+    }
+   ]
+  },
+  "114": {
+   "name": "RajaRajeswari Medical College & Hospital",
+   "address": "202, Mysore Rd, Kambipura, Kengeri Satellite Town, Bengaluru, Karnataka 560074",
+   "lat": 12.8952343,
+   "lng": 77.461949,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency (toll free)",
+     "number": "1800 4250 2222",
+     "source": "hospital.rrmch.org (official)"
+    }
+   ]
+  },
+  "115": {
+   "name": "SPARSH Hospital, RR Nagar",
+   "address": "8, Ideal Homes HBCS Layout, Javarandoddi, RR Nagar, Bengaluru, Karnataka 560098",
+   "lat": 12.9265104,
+   "lng": 77.5216589,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency and ambulance",
+     "number": "080 6122 2000",
+     "source": "sparshhospital.com (official)"
+    },
+    {
+     "label": "Hospital",
+     "number": "080 6591 4602",
+     "source": "sparshhospital.com (official)"
+    }
+   ]
+  },
+  "116": {
+   "name": "Gleneagles BGS Hospital, Kengeri",
+   "address": "67, Uttarahalli Main Rd, Sunkalpalya, Kengeri, Bengaluru, Karnataka 560060",
+   "lat": 12.902994,
+   "lng": 77.4974865,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency",
+     "number": "080 2424 2424",
+     "source": "gleneagleshospitals.co.in (official)"
+    },
+    {
+     "label": "Appointments",
+     "number": "92402 65553",
+     "source": "gleneagleshospitals.co.in (official)"
+    }
+   ]
+  },
+  "117": {
+   "name": "Gleneagles Hospital, Richmond Road",
+   "address": "5, Richmond Rd, Shanthala Nagar, Ashok Nagar, Bengaluru, Karnataka 560025",
+   "lat": 12.9653797,
+   "lng": 77.5999529,
+   "emergencyScope": "general",
+   "sector": "Private",
+   "city": "Bengaluru",
+   "district": "Bengaluru Urban",
+   "phones": [
+    {
+     "label": "Emergency",
+     "number": "080 4669 4311",
+     "source": "gleneagleshospitals.co.in (official)"
+    },
+    {
+     "label": "Appointments",
+     "number": "92402 65557",
+     "source": "gleneagleshospitals.co.in (official)"
+    }
+   ]
+  }
+ }
+}

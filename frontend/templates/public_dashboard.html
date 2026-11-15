@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AIIS Citizen Portal – Find hospitals near you by specialty, city and more." />
+    <title>AIIS – Citizen Health Portal</title>
+
+    <!-- Leaflet.js (free interactive maps, no API key needed) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        /* ============================================================
+       DESIGN TOKENS  (same palette as the main app)
+    ============================================================ */
+        :root {
+            --c-primary: #1f4e79;
+            --c-primary-dark: #163a5f;
+            --c-primary-mid: #2d6fad;
+            --c-primary-light: #e8f1fa;
+            --c-accent: #3b82f6;
+            --c-low: #2a9d8f;
+            --c-low-bg: #edf7f6;
+            --c-bg: #f8f9fb;
+            --c-surface: #ffffff;
+            --c-border: #e2e8f0;
+            --c-border-strong: #cbd5e1;
+            --c-text: #1e293b;
+            --c-text-2: #4a5568;
+            --c-text-3: #7a8fa8;
+            --c-text-muted: #94a3b8;
+            --c-high: #e63946;
+            --sh-xs: 0 1px 3px rgba(15, 30, 60, .05);
+            --sh-sm: 0 2px 8px rgba(15, 30, 60, .08);
+            --sh-md: 0 4px 18px rgba(15, 30, 60, .10);
+            --r-sm: 6px;
+            --r-md: 10px;
+            --r-lg: 14px;
+            --r-xl: 20px;
+            --r-pill: 999px;
+            --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            --mono: 'Cascadia Code', 'Consolas', 'SF Mono', monospace;
+            --t-fast: .15s ease;
+            --t-base: .22s ease;
+            --t-slow: .30s cubic-bezier(.4, 0, .2, 1);
+            --max-w: 1100px;
+            --nav-h: 62px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--c-bg);
+            color: var(--c-text);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .wrap {
+            width: 100%;
+            max-width: var(--max-w);
+            margin-inline: auto;
+            padding-inline: 32px;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseDot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .4;
+                transform: scale(.7);
+            }
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 300;
+            height: var(--nav-h);
+            background: var(--c-primary);
+            border-bottom: 3px solid var(--c-primary-dark);
+            box-shadow: 0 2px 16px rgba(15, 40, 80, .28);
+        }
+
+        .navbar__inner {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+        }
+
+        .navbar__brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .navbar__logo-box {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, .13);
+            border: 1px solid rgba(255, 255, 255, .22);
+            border-radius: var(--r-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .navbar__name {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -.2px;
+            color: #fff;
+            line-height: 1.1;
+        }
+
+        .navbar__tag {
+            font-size: 9.5px;
+            font-weight: 500;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .5);
+        }
+
+        .navbar__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 14px;
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .22);
+            border-radius: var(--r-pill);
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .85);
+        }
+
+        .navbar__live-dot {
+            width: 7px;
+            height: 7px;
+            background: #4ade80;
+            border-radius: var(--r-pill);
+            animation: pulseDot 2.2s ease-in-out infinite;
+        }
+
+        .btn-logout {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .25);
+            border-radius: var(--r-md);
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            transition: background var(--t-fast);
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, .22);
+        }
+
+        /* ── HERO BANNER ── */
+        .hero {
+            background: linear-gradient(140deg, #0d2444 0%, var(--c-primary) 55%, #1a4d7c 100%);
+            padding: 64px 0 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
+            background-size: 52px 52px;
+            pointer-events: none;
+        }
+
+        .hero__inner {
+            position: relative;
+            z-index: 1;
+            animation: fadeUp .5s ease both;
+        }
+
+        .hero__label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .9px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            background: rgba(147, 197, 253, .12);
+            border: 1px solid rgba(147, 197, 253, .25);
+            padding: 5px 14px;
+            border-radius: var(--r-pill);
+            margin-bottom: 18px;
+            font-family: var(--mono);
+        }
+
+        .hero__dot {
+            width: 6px;
+            height: 6px;
+            background: #4ade80;
+            border-radius: var(--r-pill);
+            animation: pulseDot 2s ease infinite;
+        }
+
+        .hero__h1 {
+            font-size: clamp(26px, 3.5vw, 44px);
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            line-height: 1.12;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .hero__h1 em {
+            font-style: normal;
+            background: linear-gradient(90deg, #93c5fd, #6ee7b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero__sub {
+            font-size: 16px;
+            color: rgba(255, 255, 255, .6);
+            max-width: 520px;
+            line-height: 1.75;
+        }
+
+        /* ── SEARCH BAR ── */
+        .search-section {
+            background: var(--c-surface);
+            border-bottom: 1px solid var(--c-border);
+            padding: 24px 0;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .search-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--c-text-2);
+        }
+
+        .search-input,
+        .search-select {
+            padding: 10px 14px;
+            border: 1.5px solid var(--c-border);
+            border-radius: var(--r-md);
+            font-size: 14px;
+            font-family: var(--font);
+            color: var(--c-text);
+            background: var(--c-surface);
+            outline: none;
+            appearance: none;
+            transition: border-color var(--t-fast), box-shadow var(--t-fast);
+        }
+
+        .search-input:focus,
+        .search-select:focus {
+            border-color: var(--c-primary-mid);
+            box-shadow: 0 0 0 3px rgba(42, 96, 153, .12);
+        }
+
+        .search-input::placeholder {
+            color: var(--c-text-muted);
+        }
+
+        .btn-search {
+            padding: 10px 22px;
+            background: var(--c-primary);
+            color: #fff;
+            border-radius: var(--r-md);
+            font-size: 14px;
+            font-weight: 700;
+            transition: background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+            box-shadow: 0 2px 8px rgba(31, 78, 121, .30);
+            white-space: nowrap;
+        }
+
+        .btn-search:hover {
+            background: var(--c-primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-clear {
+            padding: 10px 16px;
+            border: 1.5px solid var(--c-border);
+            border-radius: var(--r-md);
+            font-size: 13px;
+            color: var(--c-text-2);
+            font-weight: 600;
+            transition: border-color var(--t-fast);
+            white-space: nowrap;
+        }
+
+        .btn-clear:hover {
+            border-color: var(--c-border-strong);
+        }
+
+        /* ── RESULTS ── */
+        .results-section {
+            padding: 40px 0 64px;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: var(--c-text-2);
+            font-weight: 500;
+        }
+
+        .results-count strong {
+            color: var(--c-text);
+        }
+
+        .hospital-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .hospital-card {
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-lg);
+            padding: 22px 20px;
+            box-shadow: var(--sh-xs);
+            transition: box-shadow var(--t-slow), transform var(--t-slow), border-color var(--t-fast);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .hospital-card:hover {
+            box-shadow: var(--sh-md);
+            transform: translateY(-4px);
+            border-color: var(--c-border-strong);
+        }
+
+        .hc-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .hc-icon {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            background: var(--c-primary-light);
+            border-radius: var(--r-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .hc-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--c-text);
+            line-height: 1.3;
+        }
+
+        .hc-specialty {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .3px;
+            background: var(--c-primary-light);
+            color: var(--c-primary-mid);
+            padding: 2px 9px;
+            border-radius: var(--r-pill);
+        }
+
+        .hc-divider {
+            height: 1px;
+            background: var(--c-border);
+        }
+
+        .hc-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hc-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--c-text-2);
+        }
+
+        .hc-row .icon {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .hc-rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #e07b39;
+        }
+
+        .hc-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .hc-beds {
+            font-size: 12px;
+            color: var(--c-text-muted);
+        }
+
+        .hc-beds strong {
+            color: var(--c-text-2);
+            font-weight: 600;
+        }
+
+        .hc-wait {
+            font-size: 12px;
+            background: var(--c-low-bg);
+            color: var(--c-low);
+            padding: 3px 10px;
+            border-radius: var(--r-pill);
+            font-weight: 600;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            opacity: .4;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--c-text);
+            margin-bottom: 6px;
+        }
+
+        .empty-sub {
+            font-size: 14px;
+            color: var(--c-text-muted);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width:640px) {
+            .wrap {
+                padding-inline: 16px;
+            }
+
+            .search-row {
+                flex-direction: column;
+            }
+
+            .navbar__badge {
+                display: none;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="wrap">
+            <div class="navbar__inner">
+                <a href="/public" class="navbar__brand">
+                    <div class="navbar__logo-box">🏥</div>
+                    <div>
+                        <div class="navbar__name">AIIS</div>
+                        <div class="navbar__tag">Citizen Health Portal</div>
+                    </div>
+                </a>
+
+                <div class="navbar__badge">
+                    <span class="navbar__live-dot"></span>
+                    Public Access
+                </div>
+
+                <a href="/login" class="btn-logout">← Back to Login</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="wrap">
+            <div class="hero__inner">
+                <div class="hero__label">
+                    <span class="hero__dot"></span>
+                    Citizen Portal
+                </div>
+                <h1 class="hero__h1">Find the Right Hospital<br><em>Near You</em></h1>
+                <p class="hero__sub">
+                    Search across hospitals by city, specialty and rating. Get the information you need to make informed
+                    healthcare decisions.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEARCH BAR -->
+    <section class="search-section">
+        <div class="wrap">
+            <div class="search-row">
+                <div class="search-group" style="flex:2;">
+                    <label for="q">Search Hospital</label>
+                    <input class="search-input" type="text" id="q" placeholder="Type hospital name or keyword…" />
+                </div>
+                <div class="search-group">
+                    <label for="city-filter">City</label>
+                    <select class="search-select" id="city-filter">
+                        <option value="">All Cities</option>
+                        {% for c in cities %}
+                        <option value="{{ c }}">{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label for="spec-filter">Specialty</label>
+                    <select class="search-select" id="spec-filter">
+                        <option value="">All Specialties</option>
+                        {% for s in specialties %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn-search" onclick="runSearch()">🔍 Search</button>
+                <button class="btn-clear" onclick="clearSearch()">Clear</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="results-section">
+        <div class="wrap">
+
+            <!-- Results header + view toggle -->
+            <div class="results-header" style="align-items:center;">
+                <p class="results-count" id="result-count">Showing <strong id="result-num">{{ hospitals|length
+                        }}</strong> hospitals</p>
+                <div style="display:flex;gap:8px;">
+                    <button id="btn-grid" onclick="setView('grid')"
+                        style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #1f4e79;background:#1f4e79;color:#fff;transition:all .15s ease;">
+                        📊 Grid View
+                    </button>
+                    <button id="btn-map" onclick="setView('map')"
+                        style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #1f4e79;background:#e8f1fa;color:#1f4e79;transition:all .15s ease;">
+                        🗺️ Map View
+                    </button>
+                </div>
+            </div>
+
+            <!-- MAP CONTAINER (hidden by default) -->
+            <div id="map-container"
+                style="display:none;border-radius:14px;overflow:hidden;border:1.5px solid #e2e8f0;box-shadow:0 4px 18px rgba(15,30,60,.10);margin-bottom:32px;">
+                <div id="hospital-map" style="width:100%;height:520px;"></div>
+            </div>
+
+            <!-- CARD GRID -->
+            <div class="hospital-grid" id="hospital-grid">
+                {% for h in hospitals %}
+                {% if h.score >= 70 %}
+                {% set risk_label = '🔴 HIGH' %}
+                {% set risk_color = '#dc2626' %}
+                {% set risk_bg = '#fef2f2' %}
+                {% set risk_border = '#fca5a5' %}
+                {% elif h.score >= 40 %}
+                {% set risk_label = '🟡 MEDIUM' %}
+                {% set risk_color = '#d97706' %}
+                {% set risk_bg = '#fffbeb' %}
+                {% set risk_border = '#fcd34d' %}
+                {% else %}
+                {% set risk_label = '🟢 LOW' %}
+                {% set risk_color = '#16a34a' %}
+                {% set risk_bg = '#f0fdf4' %}
+                {% set risk_border = '#86efac' %}
+                {% endif %}
+                <a href="/hospital/{{ h.id }}" class="hospital-card" data-name="{{ h.name | lower }}"
+                    data-city="{{ h.city | lower }}" data-specialty="{{ h.specialty | lower }}"
+                    data-risk-color="{{ risk_color }}" data-risk-bg="{{ risk_bg }}" data-risk-border="{{ risk_border }}"
+                    style="text-decoration:none;color:inherit;">
+                    <div class="hc-top">
+                        <div class="hc-icon">🏥</div>
+                        <div style="flex:1;">
+                            <div class="hc-name">{{ h.name }}</div>
+                            <span class="hc-specialty">{{ h.specialty }}</span>
+                        </div>
+                        <span class="hc-badge"
+                            style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 10px;border-radius:999px;flex-shrink:0;">
+                            {{ risk_label }}
+                        </span>
+                    </div>
+                    <div class="hc-divider"></div>
+                    <div class="hc-meta">
+                        <div class="hc-row"><span class="icon">📍</span>{{ h.city }}</div>
+                        <div class="hc-row">
+                            <span class="icon">⭐</span>
+                            <span class="hc-rating">{{ h.rating }}</span>
+                            <span style="color:var(--c-text-muted); font-size:12px;">/ 5.0</span>
+                        </div>
+                        <div class="hc-row"><span class="icon">👨‍⚕️</span>{{ h.num_doctors }} Doctors</div>
+                    </div>
+                    <div class="hc-footer">
+                        <span class="hc-beds">Beds: <strong>{{ h.num_beds }}</strong></span>
+                        <span class="hc-wait">⏱ ~{{ h.avg_wait_time }} min wait</span>
+                    </div>
+                    {% if h.distance_km is not none %}
+                    <div
+                        style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#1f4e79;background:#e8f1fa;padding:5px 10px;border-radius:6px;">
+                        📍 {{ h.distance_km }} km away
+                    </div>
+                    {% endif %}
+                    <div
+                        style="margin-top:10px;padding:9px;background:var(--c-primary-light);border-radius:8px;text-align:center;font-size:13px;font-weight:700;color:var(--c-primary);">
+                        View Details →
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            <div class="empty-state" id="empty-state" style="display:none;">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">No hospitals found</div>
+                <div class="empty-sub">Try adjusting your search terms or filters.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hospital data for map (embedded as JSON) -->
+    <script id="hospital-data" type="application/json">
+    [
+        {% for h in hospitals %}
+        {
+            "id": {{ h.id }},
+            "name": {{ h.name | tojson }},
+            "city": {{ h.city | tojson }},
+            "specialty": {{ h.specialty | tojson }},
+            "score": {{ h.score }},
+            "lat": {{ h.lat }},
+            "lon": {{ h.lon }},
+            "rating": {{ h.rating }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]
+    </script>
+
+    <script>
+        // ── View toggle: Grid ↔ Map ───────────────────────────────────────
+        var mapInitialized = false;
+        var leafletMap = null;
+
+        function setView(view) {
+            var grid = document.getElementById('hospital-grid');
+            var mapBox = document.getElementById('map-container');
+            var btnGrid = document.getElementById('btn-grid');
+            var btnMap = document.getElementById('btn-map');
+            var emptyState = document.getElementById('empty-state');
+
+            if (view === 'map') {
+                grid.style.display = 'none';
+                if (emptyState) emptyState.style.display = 'none';
+                mapBox.style.display = 'block';
+                btnMap.style.background = '#1f4e79';
+                btnMap.style.color = '#fff';
+                btnGrid.style.background = '#e8f1fa';
+                btnGrid.style.color = '#1f4e79';
+                if (!mapInitialized) initMap();
+            } else {
+                mapBox.style.display = 'none';
+                grid.style.display = '';
+                btnGrid.style.background = '#1f4e79';
+                btnGrid.style.color = '#fff';
+                btnMap.style.background = '#e8f1fa';
+                btnMap.style.color = '#1f4e79';
+            }
+        }
+
+        function initMap() {
+            mapInitialized = true;
+            var hospitals = JSON.parse(document.getElementById('hospital-data').textContent);
+
+            // Center on India
+            leafletMap = L.map('hospital-map').setView([20.5937, 78.9629], 5);
+
+            // Free OpenStreetMap tiles (no API key)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '© <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+            }).addTo(leafletMap);
+
+            hospitals.forEach(function (h) {
+                var score = h.score;
+                var color, label, bgColor;
+                if (score >= 70) { color = '#dc2626'; label = '🔴 HIGH'; bgColor = '#fef2f2'; }
+                else if (score >= 40) { color = '#d97706'; label = '🟡 MEDIUM'; bgColor = '#fffbeb'; }
+                else { color = '#16a34a'; label = '🟢 LOW'; bgColor = '#f0fdf4'; }
+
+                // SVG circle marker
+                var markerHtml = '<div style="width:32px;height:32px;background:' + color + ';border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:14px;">🏥</div>';
+                var icon = L.divIcon({ html: markerHtml, className: '', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -18] });
+
+                var popup = '<div style="font-family:system-ui,sans-serif;min-width:220px;">' +
+                    '<div style="font-size:15px;font-weight:800;color:#1e293b;margin-bottom:4px;">' + h.name + '</div>' +
+                    '<div style="font-size:12px;color:#64748b;margin-bottom:8px;">📍 ' + h.city + ' &nbsp;·&nbsp; ' + h.specialty + '</div>' +
+                    '<div style="display:flex;gap:8px;margin-bottom:10px;">' +
+                    '<span style="background:' + bgColor + ';color:' + color + ';border:1px solid ' + color + ';padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;">' + label + '</span>' +
+                    '<span style="background:#f1f5f9;color:#475569;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;">Score: ' + score + '/100</span>' +
+                    '</div>' +
+                    '<div style="font-size:12px;color:#64748b;margin-bottom:10px;">⭐ ' + h.rating + ' &nbsp;|&nbsp; 🛏️ ' + '</div>' +
+                    '<a href="/hospital/' + h.id + '" style="display:block;text-align:center;background:#1f4e79;color:#fff;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:700;text-decoration:none;">View Details →</a>' +
+                    '</div>';
+
+                L.marker([h.lat, h.lon], { icon: icon })
+                    .bindPopup(popup, { maxWidth: 260 })
+                    .addTo(leafletMap);
+            });
+        }
+
+        // Apply risk colours from data-* attributes
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.hospital-card[data-risk-color]').forEach(function (card) {
+                var color = card.dataset.riskColor;
+                var bg = card.dataset.riskBg;
+                var bdr = card.dataset.riskBorder;
+                card.style.borderTop = '4px solid ' + color;
+                var badge = card.querySelector('.hc-badge');
+                if (badge) {
+                    badge.style.background = bg;
+                    badge.style.color = color;
+                    badge.style.border = '1px solid ' + bdr;
+                }
+            });
+        });
+        function runSearch() {
+            var q = document.getElementById('q').value.toLowerCase().trim();
+            var city = document.getElementById('city-filter').value.toLowerCase();
+            var spec = document.getElementById('spec-filter').value.toLowerCase();
+            var cards = document.querySelectorAll('.hospital-card');
+            var visible = 0;
+            cards.forEach(function (card) {
+                var matchQ = !q || card.dataset.name.includes(q) || card.dataset.specialty.includes(q) || card.dataset.city.includes(q);
+                var matchCity = !city || card.dataset.city === city;
+                var matchSpec = !spec || card.dataset.specialty === spec;
+                if (matchQ && matchCity && matchSpec) {
+                    card.style.display = '';
+                    visible++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            document.getElementById('result-num').textContent = visible;
+            document.getElementById('empty-state').style.display = visible === 0 ? '' : 'none';
+            document.getElementById('hospital-grid').style.display = visible === 0 ? 'none' : '';
+        }
+
+        function clearSearch() {
+            document.getElementById('q').value = '';
+            document.getElementById('city-filter').value = '';
+            document.getElementById('spec-filter').value = '';
+            runSearch();
+        }
+
+        // Live search on text input
+        document.getElementById('q').addEventListener('input', runSearch);
+        document.getElementById('city-filter').addEventListener('change', runSearch);
+        document.getElementById('spec-filter').addEventListener('change', runSearch);
+
+        // ── Geolocation: send lat/lon directly to /public for Haversine sorting ──
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                // Skip redirect if already loaded with coords (avoid infinite loop)
+                var params = new URLSearchParams(window.location.search);
+                if (!params.get('lat')) {
+                    window.location.href = '/public?lat=' + latitude + '&lon=' + longitude;
+                }
+            }, function () { /* user denied or unavailable — silent fail */ });
+        }
+    </script>
+
+</body>
+
+</html>

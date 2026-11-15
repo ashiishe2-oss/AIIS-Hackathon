@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AIIS – Secure login portal for health officials and the general public." />
+    <title>AIIS – Login</title>
+
+    <style>
+        /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+        :root {
+            --primary: #1f4e79;
+            --primary-dark: #163a5f;
+            --primary-mid: #2a6099;
+            --primary-light: #e8f0f9;
+            --primary-faint: #f2f6fc;
+
+            --accent: #2a9d8f;
+            --accent-light: #edf7f6;
+
+            --high: #e63946;
+
+            --bg: #f0f4f8;
+            --surface: #ffffff;
+            --surface-raised: #fafbfd;
+
+            --border: #dce4ef;
+            --border-strong: #c4d0e3;
+            --border-focus: #2a6099;
+
+            --text: #1e293b;
+            --text-secondary: #4a5568;
+            --text-muted: #7a8fa8;
+
+            --shadow-sm: 0 1px 4px rgba(15, 40, 80, 0.07);
+            --shadow-card: 0 4px 24px rgba(15, 40, 80, 0.10),
+                0 1px 4px rgba(15, 40, 80, 0.06);
+            --shadow-card-hover: 0 8px 40px rgba(15, 40, 80, 0.14),
+                0 2px 8px rgba(15, 40, 80, 0.08);
+            --shadow-btn: 0 2px 8px rgba(31, 78, 121, 0.30);
+            --shadow-btn-hover: 0 4px 16px rgba(31, 78, 121, 0.40);
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-pill: 999px;
+
+            --font: 'Segoe UI', -apple-system, BlinkMacSystemFont,
+                'Helvetica Neue', Helvetica, sans-serif;
+            --font-mono: 'Cascadia Code', 'Consolas', 'SF Mono', 'Menlo', monospace;
+
+            --transition: 0.18s ease;
+            --transition-slow: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================================
+       RESET
+    ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+       PAGE ANIMATION
+    ============================================================ */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulseDot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.72);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -400px 0;
+            }
+
+            100% {
+                background-position: 400px 0;
+            }
+        }
+
+        /* ============================================================
+       BACKGROUND — Subtle grid texture
+    ============================================================ */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-color: var(--bg);
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.45;
+        }
+
+        /* Left panel accent */
+        .page-bg::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-mid) 60%, var(--accent) 100%);
+        }
+
+        /* ============================================================
+       LAYOUT WRAPPER
+    ============================================================ */
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 32px 16px;
+        }
+
+        .page-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        /* ============================================================
+       GOVERNMENT HEADER BAND
+    ============================================================ */
+        .gov-band {
+            width: 100%;
+            max-width: 480px;
+            background: var(--primary);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            animation: fadeIn 0.3s ease both;
+        }
+
+        .gov-band__left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+            font-family: var(--font-mono);
+        }
+
+        .gov-band__dot {
+            width: 7px;
+            height: 7px;
+            background: #4ade80;
+            border-radius: var(--radius-pill);
+            animation: pulseDot 2.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        .gov-band__right {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: rgba(255, 255, 255, 0.50);
+            white-space: nowrap;
+        }
+
+        /* ============================================================
+       MAIN LOGIN CARD
+    ============================================================ */
+        .login-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--surface);
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            animation: fadeUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.05s both;
+        }
+
+        /* ----  Card Header  ---- */
+        .card-header {
+            background: var(--primary-faint);
+            border-bottom: 1px solid var(--border);
+            padding: 32px 40px 28px;
+            text-align: center;
+        }
+
+        .card-header__logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon-wrap {
+            width: 52px;
+            height: 52px;
+            background: var(--primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 16px rgba(31, 78, 121, 0.28);
+            flex-shrink: 0;
+        }
+
+        .logo-text-wrap {
+            text-align: left;
+        }
+
+        .logo-name {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .logo-full {
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+
+        .card-header__tagline {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--primary-light);
+            border: 1px solid #c2d7ed;
+            border-radius: var(--radius-pill);
+            padding: 5px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: 0.1px;
+        }
+
+        .tagline-icon {
+            font-size: 12px;
+        }
+
+        /* ----  Card Body (Form)  ---- */
+        .card-body {
+            padding: 32px 40px 28px;
+        }
+
+        .form-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+
+        .form-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        /* ----  Form Groups  ---- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+            letter-spacing: -0.1px;
+        }
+
+        .form-label span {
+            color: var(--high);
+            margin-left: 2px;
+        }
+
+        /* Input wrapper — for icon prefix */
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 15px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.55;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 11px 14px 11px 42px;
+            font-family: var(--font);
+            font-size: 14px;
+            color: var(--text);
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition:
+                border-color var(--transition),
+                box-shadow var(--transition),
+                background var(--transition);
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        /* Select arrow */
+        .select-wrap::after {
+            content: '▾';
+            position: absolute;
+            right: 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+            font-size: 13.5px;
+        }
+
+        .form-input:hover,
+        .form-select:hover {
+            border-color: var(--border-strong);
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--border-focus);
+            background: var(--primary-faint);
+            box-shadow: 0 0 0 3px rgba(42, 96, 153, 0.12);
+        }
+
+        .form-select option {
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        /* Password field — show/hide toggle */
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            color: var(--text-muted);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            transition: color var(--transition);
+            line-height: 1;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* Forgot password row */
+        .form-row-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 7px;
+        }
+
+        .forgot-link {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--primary-mid);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* ----  Submit Button  ---- */
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-btn);
+            transition:
+                background var(--transition),
+                box-shadow var(--transition),
+                transform var(--transition);
+            margin-top: 8px;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-btn-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-btn);
+        }
+
+        .btn-login__icon {
+            font-size: 16px;
+        }
+
+        /* ----  Divider  ---- */
+        .card-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0 20px;
+        }
+
+        /* ----  Security Notice  ---- */
+        .security-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--primary-mid);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+        }
+
+        .security-notice__icon {
+            font-size: 15px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .security-notice__text {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .security-notice__text strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* ----  Card Footer  ---- */
+        .card-footer {
+            background: var(--primary-faint);
+            border-top: 1px solid var(--border);
+            padding: 14px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .card-footer__help {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .card-footer__help a {
+            color: var(--primary-mid);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .card-footer__help a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .card-footer__version {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+       SITE FOOTER
+    ============================================================ */
+        .site-footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 20px 16px 16px;
+            animation: fadeIn 0.5s ease 0.3s both;
+        }
+
+        .site-footer__name {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.1px;
+        }
+
+        .site-footer__legal {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .site-footer__links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .site-footer__link {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .site-footer__link:hover {
+            color: var(--primary);
+        }
+
+        .site-footer__sep {
+            color: var(--border-strong);
+            font-size: 11px;
+        }
+
+        /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+        @media (max-width: 540px) {
+            .page-wrapper {
+                padding: 20px 12px;
+            }
+
+            .gov-band,
+            .login-card {
+                max-width: 100%;
+            }
+
+            .card-header {
+                padding: 24px 24px 20px;
+            }
+
+            .card-body {
+                padding: 24px 24px 20px;
+            }
+
+            .card-footer {
+                padding: 12px 24px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .logo-name {
+                font-size: 22px;
+            }
+
+            .logo-icon-wrap {
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+
+            .gov-band__right {
+                display: none;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+
+    <!-- Background texture layer -->
+    <div class="page-bg" aria-hidden="true"></div>
+
+    <!-- ============================================================
+       PAGE WRAPPER
+  ============================================================ -->
+    <div class="page-wrapper">
+        <main class="page-center" role="main">
+
+            <!-- ============================================================
+           GOVERNMENT AUTHORITY BAND
+      ============================================================ -->
+            <div class="gov-band" role="banner" aria-label="System status">
+                <div class="gov-band__left">
+                    <span class="gov-band__dot" aria-hidden="true"></span>
+                    Secure Government Portal
+                </div>
+                <div class="gov-band__right">
+                    Health Intelligence System · All Users Welcome
+                </div>
+            </div>
+
+            <!-- ============================================================
+           LOGIN CARD
+      ============================================================ -->
+            <div class="login-card" role="region" aria-label="Login">
+
+                <!-- Card Header: Branding -->
+                <div class="card-header">
+                    <div class="card-header__logo" aria-label="AIIS – Advanced Integrated Intelligence System">
+                        <div class="logo-icon-wrap" aria-hidden="true">🏥</div>
+                        <div class="logo-text-wrap">
+                            <div class="logo-name">AIIS</div>
+                            <div class="logo-full">Advanced Integrated Intelligence System</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="card-header__tagline">
+                            <span class="tagline-icon" aria-hidden="true">🔐</span>
+                            Secure Access Portal
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card Body: Login Form -->
+                <div class="card-body">
+
+                    <h1 class="form-title">Sign In to Your Account</h1>
+                    <p class="form-subtitle" id="formSubtitle">Select your role to continue. Officials need credentials;
+                        public users get instant access.</p>
+
+                    {% if error %}
+                    <div class="error-box"
+                        style="background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;padding:12px 14px;border-radius:var(--radius-sm);font-size:13.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+                        <span aria-hidden="true" style="font-size:16px;">⚠️</span>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endif %}
+                    {% if success %}
+                    <div class="alert alert-success" role="alert"
+                        style="background:#f0fdf4; border:1px solid #86efac; color:#16a34a; padding:12px 14px; border-radius:var(--radius-sm); font-size:13.5px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                        <span class="icon" aria-hidden="true" style="font-size:16px;">✅</span>
+                        {{ success }}
+                    </div>
+                    {% endif %}
+
+                    <!-- LOGIN FORM -->
+                    <form action="/login" method="POST" novalidate aria-label="Login form">
+
+                        <!-- Role Selector -->
+                        <div class="form-group">
+                            <label class="form-label" for="role">
+                                Select Role <span aria-hidden="true">*</span>
+                            </label>
+                            <div class="input-wrap select-wrap">
+                                <span class="input-icon" aria-hidden="true">🏛️</span>
+                                <select class="form-select" id="role" name="role" required aria-required="true"
+                                    aria-describedby="role-hint" onchange="updateRoleHint(this.value)">
+                                    <option value="" disabled selected>— Select your role —</option>
+                                    <optgroup label="👥 General Access">
+                                        <option value="public">👤 Common People / Public User</option>
+                                    </optgroup>
+                                    <optgroup label="🏛️ Administrator">
+                                        <option value="authority">Authorities</option>
+                                        <option value="hospital_admin">Medical Authority / Hospital Admin</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <p id="role-hint" style="font-size:11.5px; color:var(--text-muted); margin-top:5px;">
+                                Choose your role — public users access the citizen portal; officials access the full
+                                intelligence dashboard.
+                            </p>
+                        </div>
+
+                        <!-- Public-user instant access notice (hidden by default) -->
+                        <div id="public-access-box"
+                            style="display:none;background:#edf7f6;border:1.5px solid #a8d8d4;border-radius:var(--radius-sm);padding:16px 18px;text-align:center;margin-bottom:20px">
+                            <div style="font-size:28px;margin-bottom:6px">👤</div>
+                            <div style="font-size:14px;font-weight:700;color:#1f4e79">Public Citizen Portal</div>
+                            <div style="font-size:12.5px;color:var(--text-muted);margin-top:4px">No login required —
+                                click below to access<br>hospital search &amp; bed availability.</div>
+                        </div>
+
+                        <!-- Credentials section (hidden for public role) -->
+                        <div id="auth-fields">
+                            <!-- Username / Email -->
+                            <div class="form-group">
+                                <label class="form-label" for="username">
+                                    Username or Email <span aria-hidden="true">*</span>
+                                </label>
+                                <div class="input-wrap">
+                                    <span class="input-icon" aria-hidden="true">👤</span>
+                                    <input class="form-input" type="text" id="username" name="username"
+                                        placeholder="admin" value="admin" autocomplete="username" required
+                                        aria-required="true" spellcheck="false" autocapitalize="off" />
+                                </div>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group">
+                                <div class="form-row-flex">
+                                    <label class="form-label" for="password" style="margin-bottom:0;">
+                                        Password <span aria-hidden="true">*</span>
+                                    </label>
+                                    <a href="#" class="forgot-link" tabindex="0" aria-label="Forgot your password?">
+                                        Forgot password?
+                                    </a>
+                                </div>
+                                <div class="input-wrap" style="margin-top:7px;">
+                                    <span class="input-icon" aria-hidden="true">🔒</span>
+                                    <input class="form-input" type="password" id="password" name="password"
+                                        placeholder="password" value="password" autocomplete="current-password" required
+                                        aria-required="true" />
+                                    <button type="button" class="password-toggle"
+                                        aria-label="Toggle password visibility" onclick="
+                    var f = document.getElementById('password');
+                    f.type = f.type === 'password' ? 'text' : 'password';
+                    this.textContent = f.type === 'password' ? '👁️' : '🙈';
+                  " tabindex="0">👁️</button>
+                                </div>
+                            </div>
+                        </div><!-- /auth-fields -->
+
+                        <!-- Submit -->
+                        <button type="submit" class="btn-login" aria-label="Sign in to AIIS">
+                            <span class="btn-login__icon" aria-hidden="true">🔐</span>
+                            Sign In Securely
+                        </button>
+
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="card-divider" aria-hidden="true"></div>
+
+                    <!-- Security Notice -->
+                    <div class="security-notice" role="note" aria-label="Security information">
+                        <span class="security-notice__icon" aria-hidden="true">🛡️</span>
+                        <p class="security-notice__text">
+                            <strong>Secure System.</strong> Health authority accounts are verified and
+                            monitored. Public users can freely access the citizen portal. All sessions are logged.
+                        </p>
+                    </div>
+
+                </div><!-- /card-body -->
+
+                <!-- Card Footer -->
+                <div class="card-footer">
+                    Need help logging in? <a href="#" class="txt-link">Contact IT Support</a><br>
+                    <span style="display:inline-block; margin-top:8px;">New here? <a href="/register"
+                            class="txt-link">Create Account</a></span>
+                    <span class="card-footer__version">v3.2.1 · Secure</span>
+                </div>
+
+            </div><!-- /login-card -->
+
+        </main>
+
+        <!-- ============================================================
+         SITE FOOTER
+    ============================================================ -->
+        <footer class="site-footer" role="contentinfo">
+            <p class="site-footer__name">AIIS – State Health Intelligence Platform</p>
+            <p class="site-footer__legal">
+                © 2025 State Health Department. All rights reserved. For official use only.
+            </p>
+            <nav class="site-footer__links" aria-label="Footer links">
+                <a href="#" class="site-footer__link">Privacy Policy</a>
+                <span class="site-footer__sep" aria-hidden="true">·</span>
+                <a href="#" class="site-footer__link">Terms of Use</a>
+                <span class="site-footer__sep" aria-hidden="true">·</span>
+                <a href="#" class="site-footer__link">Accessibility</a>
+                <span class="site-footer__sep" aria-hidden="true">·</span>
+                <a href="#" class="site-footer__link">Help</a>
+            </nav>
+        </footer>
+
+    </div><!-- /page-wrapper -->
+
+    <script>
+        function updateRoleHint(val) {
+            var hint = document.getElementById('role-hint');
+            var authFields = document.getElementById('auth-fields');
+            var publicBox = document.getElementById('public-access-box');
+            var btn = document.querySelector('.btn-login');
+            var subtitle = document.getElementById('formSubtitle');
+
+            // Toggle visibility
+            var isPublic = (val === 'public');
+            authFields.style.display = isPublic ? 'none' : '';
+            publicBox.style.display = isPublic ? 'block' : 'none';
+
+            // Remove required on hidden inputs so form doesn't block submission
+            document.getElementById('username').required = !isPublic;
+            document.getElementById('password').required = !isPublic;
+
+            if (isPublic) {
+                hint.innerHTML = '<strong>No login needed.</strong> Click the button below to enter the Citizen Health Portal.';
+                subtitle.textContent = 'You are accessing the public citizen portal — no credentials required.';
+                btn.innerHTML = '<span class="btn-login__icon" aria-hidden="true">🚪</span> Enter Citizen Portal';
+            } else if (val) {
+                hint.innerHTML = 'Officials will be directed to the full intelligence dashboard after sign-in.';
+                subtitle.textContent = 'Enter your credentials to access the AIIS intelligence dashboard.';
+                btn.innerHTML = '<span class="btn-login__icon" aria-hidden="true">🔐</span> Sign In Securely';
+            } else {
+                hint.textContent = 'Choose your role — public users access the citizen portal; officials access the full intelligence dashboard.';
+                subtitle.textContent = 'Select your role to continue. Officials need credentials; public users get instant access.';
+                btn.innerHTML = '<span class="btn-login__icon" aria-hidden="true">🔐</span> Sign In Securely';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

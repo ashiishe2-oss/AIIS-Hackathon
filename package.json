@@ -1,0 +1,16 @@
+{
+  "name": "aiis-frontend",
+  "version": "1.2.0",
+  "private": true,
+  "description": "AIIS patient web app (vanilla HTML/CSS/JS, no build step). Frontend handoff package for Backend V2 integration.",
+  "type": "module",
+  "scripts": {
+    "start": "node dev-server.js",
+    "check": "node --check public/app.js && node --check dev-server.js",
+    "start:env": "node --env-file=.env dev-server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

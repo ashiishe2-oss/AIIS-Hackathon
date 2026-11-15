@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AIIS — Hospital Facility Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --navy: #0e3b43;
+            --navy2: #164f59;
+            --blue: #148f9e;
+            --accent: #23b4c6;
+            --hi: #c0392b;
+            --hi-bg: #fdf0ef;
+            --hi-bd: #f5b7b1;
+            --md: #d68910;
+            --md-bg: #fef9ec;
+            --md-bd: #f9de86;
+            --lo: #1e8449;
+            --lo-bg: #eafaf1;
+            --lo-bd: #a9dfbf;
+            --bg: #f0f4f8;
+            --surf: #fff;
+            --bdr: #dde4ee;
+            --txt: #1a2637;
+            --txt2: #4a5568;
+            --txt3: #8898aa;
+            --sh: 0 2px 10px rgba(15, 45, 84, .09);
+            --sh2: 0 6px 24px rgba(15, 45, 84, .14);
+            --r: 10px;
+            --r2: 14px;
+            --mono: 'Consolas', 'SF Mono', monospace;
+        }
+
+        *,
+        ::before,
+        ::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--txt);
+            -webkit-font-smoothing: antialiased
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none
+        }
+
+        /* ── TOP HEADER ── */
+        .top-bar {
+            background: var(--navy);
+            padding: 0;
+            border-bottom: 3px solid var(--navy2);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            box-shadow: var(--sh2)
+        }
+
+        .top-bar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            padding: 0 28px;
+            gap: 16px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, .13);
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px
+        }
+
+        .brand-text {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.3px
+        }
+
+        .brand-sub {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, .45)
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .live-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-family: var(--mono);
+            color: rgba(255, 255, 255, .6)
+        }
+
+        .pulse {
+            width: 7px;
+            height: 7px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .3
+            }
+        }
+
+        .btn-out {
+            padding: 5px 13px;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .8);
+            transition: .15s
+        }
+
+        .btn-out:hover {
+            background: rgba(255, 255, 255, .2)
+        }
+
+        /* ── SUMMARY BANNER ── */
+        .summary-bar {
+            background: var(--navy2);
+            padding: 10px 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, .08)
+        }
+
+        .sb-badge {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, .8);
+            font-family: var(--mono)
+        }
+
+        .sb-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .sb-val {
+            font-weight: 800;
+            font-size: 14px;
+            margin-right: 2px
+        }
+
+        .sb-div {
+            width: 1px;
+            height: 16px;
+            background: rgba(255, 255, 255, .15)
+        }
+
+        .sb-now {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .4);
+            font-family: var(--mono);
+            margin-left: auto
+        }
+
+
+        /* ── TAB NAV ── */
+        .tab-nav {
+            background: #fff;
+            border-bottom: 2px solid var(--bdr);
+            padding: 0 28px;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch
+        }
+
+        .tab-btn {
+            padding: 14px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--txt3);
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: .15s
+        }
+
+        .tab-btn:hover {
+            color: var(--blue)
+        }
+
+        .tab-btn.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue)
+        }
+
+        .tab-badge {
+            font-size: 10px;
+            background: #fee2e2;
+            color: var(--hi);
+            border-radius: 20px;
+            padding: 1px 7px;
+            font-weight: 800
+        }
+
+        .tab-badge.warn {
+            background: #fef9ec;
+            color: var(--md)
+        }
+
+        .tab-badge.ok {
+            background: #eafaf1;
+            color: var(--lo)
+        }
+
+        /* ── TAB PANES ── */
+        .tab-pane {
+            display: none;
+            padding: 28px;
+            animation: fadeIn .2s ease
+        }
+
+        .tab-pane.active {
+            display: block
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .wrap {
+            max-width: 1300px;
+            margin: 0 auto
+        }
+
+        /* ── KPI GRID ── */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+            margin-bottom: 28px
+        }
+
+        @media(max-width:1100px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr)
+            }
+        }
+
+        @media(max-width:600px) {
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        .kpi-card {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: var(--r2);
+            padding: 18px 16px;
+            box-shadow: var(--sh);
+            position: relative;
+            overflow: hidden;
+            transition: .2s
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--sh2);
+            transform: translateY(-2px)
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 3px 3px 0 0
+        }
+
+        .k-total::before {
+            background: linear-gradient(90deg, #2563eb, #60a5fa)
+        }
+
+        .k-beds::before {
+            background: linear-gradient(90deg, #7c3aed, #a78bfa)
+        }
+
+        .k-high::before {
+            background: var(--hi)
+        }
+
+        .k-med::before {
+            background: var(--md)
+        }
+
+        .k-sri::before {
+            background: linear-gradient(90deg, var(--blue), #38bdf8)
+        }
+
+        .k-opd::before {
+            background: var(--lo)
+        }
+
+        .kpi-ico {
+            font-size: 20px;
+            margin-bottom: 10px
+        }
+
+        .kpi-val {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1
+        }
+
+        .k-total .kpi-val {
+            color: #2563eb
+        }
+
+        .k-beds .kpi-val {
+            color: #7c3aed
+        }
+
+        .k-high .kpi-val {
+            color: var(--hi)
+        }
+
+        .k-med .kpi-val {
+            color: var(--md)
+        }
+
+        .k-sri .kpi-val {
+            color: var(--blue)
+        }
+
+        .k-opd .kpi-val {
+            color: var(--lo)
+        }
+
+        .kpi-lbl {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--txt2);
+            margin-top: 3px
+        }
+
+        .kpi-sub {
+            font-size: 11px;
+            color: var(--txt3);
+            font-family: var(--mono);
+            margin-top: 2px
+        }
+
+        .trend-up {
+            color: var(--hi)
+        }
+
+        .trend-dn {
+            color: var(--lo)
+        }
+
+        /* ── CHART ROW ── */
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px
+        }
+
+        @media(max-width:768px) {
+            .chart-row {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .card {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: var(--r2);
+            padding: 22px;
+            box-shadow: var(--sh)
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--txt);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .chart-h {
+            position: relative;
+            height: 260px
+        }
+
+        /* ── MAP ── */
+        #main-map {
+            height: 480px;
+            border-radius: var(--r2);
+            border: 1px solid var(--bdr);
+            box-shadow: var(--sh)
+        }
+
+        /* ── FORECAST ── */
+        .forecast-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+            border: 1px solid
+        }
+
+        .forecast-banner.ok {
+            background: #eafaf1;
+            border-color: var(--lo-bd);
+            color: var(--lo)
+        }
+
+        .forecast-banner.warn {
+            background: var(--hi-bg);
+            border-color: var(--hi-bd);
+            color: var(--hi)
+        }
+
+        /* ── ALERTS ── */
+        .alert-item {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: var(--sh);
+            transition: .2s
+        }
+
+        .alert-item:hover {
+            box-shadow: var(--sh2)
+        }
+
+        .alert-item.high {
+            border-left: 4px solid var(--hi)
+        }
+
+        .alert-item.medium {
+            border-left: 4px solid var(--md)
+        }
+
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .a-sev {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 16px;
+            white-space: nowrap
+        }
+
+        .sev-high {
+            background: var(--hi-bg);
+            color: var(--hi);
+            border: 1px solid var(--hi-bd)
+        }
+
+        .sev-medium {
+            background: var(--md-bg);
+            color: var(--md);
+            border: 1px solid var(--md-bd)
+        }
+
+        .a-body {
+            flex: 1
+        }
+
+        .a-hosp {
+            font-size: 13px;
+            font-weight: 700
+        }
+
+        .a-msg {
+            font-size: 12px;
+            color: var(--txt2);
+            margin-top: 2px
+        }
+
+        .a-action {
+            font-size: 11.5px;
+            color: var(--blue);
+            font-weight: 600;
+            margin-top: 3px
+        }
+
+        .a-time {
+            font-size: 11px;
+            font-family: var(--mono);
+            color: var(--txt3);
+            white-space: nowrap
+        }
+
+        /* ── TABLE ── */
+        .tbl-wrap {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: var(--r2);
+            box-shadow: var(--sh);
+            overflow: hidden
+        }
+
+        .tbl-toolbar {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--bdr);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center
+        }
+
+        .tbl-search {
+            flex: 1;
+            min-width: 160px;
+            padding: 8px 13px;
+            border: 1px solid var(--bdr);
+            border-radius: 8px;
+            font-size: 12.5px;
+            outline: none;
+            transition: .15s
+        }
+
+        .tbl-search:focus {
+            border-color: var(--accent)
+        }
+
+        .tbl-sel {
+            padding: 7px 11px;
+            border: 1px solid var(--bdr);
+            border-radius: 8px;
+            font-size: 12.5px;
+            background: #fff;
+            cursor: pointer
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        thead {
+            background: #f3f7fc
+        }
+
+        th {
+            padding: 10px 13px;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: var(--txt3);
+            text-align: left;
+            cursor: pointer;
+            white-space: nowrap;
+            user-select: none
+        }
+
+        th:hover {
+            background: #e8f0f9;
+            color: var(--blue)
+        }
+
+        td {
+            padding: 10px 13px;
+            font-size: 12.5px;
+            border-top: 1px solid var(--bdr);
+            vertical-align: middle
+        }
+
+        tr:hover td {
+            background: #f7faff
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase
+        }
+
+        .pill.high {
+            background: var(--hi-bg);
+            color: var(--hi);
+            border: 1px solid var(--hi-bd)
+        }
+
+        .pill.medium {
+            background: var(--md-bg);
+            color: var(--md);
+            border: 1px solid var(--md-bd)
+        }
+
+        .pill.low {
+            background: var(--lo-bg);
+            color: var(--lo);
+            border: 1px solid var(--lo-bd)
+        }
+
+        .btn-view {
+            padding: 5px 12px;
+            background: var(--blue);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            transition: .15s
+        }
+
+        .btn-view:hover {
+            background: var(--navy)
+        }
+
+        /* ── RESOURCES ── */
+        .res-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px
+        }
+
+        @media(max-width:768px) {
+            .res-grid {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        .res-card {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: var(--r2);
+            padding: 22px;
+            box-shadow: var(--sh);
+            text-align: center
+        }
+
+        .res-num {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: var(--blue);
+            margin: 8px 0 4px
+        }
+
+        .res-lbl {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--txt)
+        }
+
+        .res-sub {
+            font-size: 11px;
+            color: var(--txt3);
+            margin-top: 2px
+        }
+
+        .alt-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: 8px;
+            font-size: 12.5px;
+            margin-bottom: 8px
+        }
+
+        .alt-name {
+            font-weight: 700
+        }
+
+        .alt-beds {
+            font-family: var(--mono);
+            color: var(--lo);
+            font-weight: 700
+        }
+
+        /* ── EXPORTS ── */
+        .exp-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px
+        }
+
+        @media(max-width:768px) {
+            .exp-grid {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        .exp-card {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: var(--r2);
+            padding: 22px 18px;
+            text-align: center;
+            box-shadow: var(--sh);
+            cursor: pointer;
+            transition: .2s
+        }
+
+        .exp-card:hover {
+            box-shadow: var(--sh2);
+            border-color: var(--accent)
+        }
+
+        .exp-icon {
+            font-size: 28px;
+            margin-bottom: 10px
+        }
+
+        .exp-title {
+            font-size: 13px;
+            font-weight: 700
+        }
+
+        .exp-sub {
+            font-size: 11.5px;
+            color: var(--txt3);
+            margin-top: 3px
+        }
+
+        .exp-btn {
+            margin-top: 14px;
+            padding: 7px 16px;
+            background: var(--blue);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: inline-block;
+            transition: .15s
+        }
+
+        .exp-btn:hover {
+            background: var(--navy)
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 25, 50, .55);
+            z-index: 900;
+            padding: 16px;
+            overflow-y: auto
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center
+        }
+
+        .modal-box {
+            background: var(--surf);
+            border-radius: var(--r2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+            width: 100%;
+            max-width: 960px;
+            margin: auto;
+            overflow: hidden
+        }
+
+        .modal-hdr {
+            background: var(--navy);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .modal-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 7px;
+            color: #fff;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: .15s
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, .25)
+        }
+
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--bdr)
+        }
+
+        @media(max-width:600px) {
+            .modal-stats {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        .ms {
+            background: #f3f7fc;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center
+        }
+
+        .ms-val {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--blue)
+        }
+
+        .ms-lbl {
+            font-size: 10.5px;
+            color: var(--txt3);
+            font-weight: 600;
+            margin-top: 2px
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px
+        }
+
+        @media(max-width:680px) {
+            .modal-body {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .modal-chart {
+            position: relative;
+            height: 190px
+        }
+
+        .sub-h {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--txt);
+            margin-bottom: 8px;
+            margin-top: 16px
+        }
+
+        .sub-h:first-child {
+            margin-top: 0
+        }
+
+        .driver-item,
+        .rec-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            font-size: 12px;
+            color: var(--txt2);
+            background: #f7faff;
+            border: 1px solid var(--bdr);
+            border-radius: 8px;
+            padding: 9px 11px;
+            margin-bottom: 7px
+        }
+
+        .rec-item.HIGH {
+            border-left: 3px solid var(--hi);
+            background: var(--hi-bg)
+        }
+
+        .rec-item.MEDIUM {
+            border-left: 3px solid var(--md);
+            background: var(--md-bg)
+        }
+
+        .rec-item.LOW {
+            border-left: 3px solid var(--lo);
+            background: var(--lo-bg)
+        }
+
+        /* ── UTILS ── */
+        .text-hi {
+            color: var(--hi);
+        }
+
+        .text-md {
+            color: var(--md);
+        }
+
+        .text-lo {
+            color: var(--lo);
+        }
+
+        .section-head {
+            margin-bottom: 18px
+        }
+
+        .eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--blue);
+            font-family: var(--mono);
+            margin-bottom: 3px
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--txt);
+            letter-spacing: -.3px
+        }
+
+        .section-sub {
+            font-size: 12px;
+            color: var(--txt3);
+            margin-top: 2px
+        }
+
+        .section-hdr {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px
+        }
+
+        .gap-top {
+            margin-top: 20px
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="brand">
+                <div class="brand-icon">🏥</div>
+                <div>
+                    <div class="brand-text">AIIS</div>
+                    <div class="brand-sub">Health Intelligence System</div>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="live-btn"><span class="pulse"></span>Live · {{ now_str }}</div>
+                <a href="/login" class="btn-out">⇠ Sign Out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUMMARY BANNER -->
+    <div class="summary-bar">
+        <div class="sb-badge"><span class="sb-dot" style="background:#4ade80"></span><span class="sb-val">{{
+                kpi.total_hospitals }}</span> Hospitals</div>
+        <div class="sb-div"></div>
+        <div class="sb-badge"><span class="sb-dot" style="background:#c0392b"></span><span class="sb-val">{{
+                kpi.high_risk }}</span> High Risk</div>
+        <div class="sb-div"></div>
+        <div class="sb-badge"><span class="sb-dot" style="background:#d68910"></span><span class="sb-val">{{
+                kpi.medium_risk }}</span> Medium</div>
+        <div class="sb-div"></div>
+        <div class="sb-badge"><span class="sb-dot" style="background:#1d5fa8"></span><span class="sb-val">{{ kpi.avg_sri
+                }}</span>/100 Avg SRI</div>
+        <div class="sb-div"></div>
+        <div class="sb-badge"><span class="sb-val">{{ "{:,}".format(kpi.total_beds) }}</span> Beds</div>
+        <div class="sb-now">District · Karnataka</div>
+    </div>
+
+    <!-- TAB NAV -->
+    <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="t-overview">📊 Overview</button>
+        <button class="tab-btn" data-tab="t-casualty">🚨 Casualty Intake <span class="tab-badge" id="casualty-badge">{{ incoming_requests|length }}</span></button>
+        <button class="tab-btn" data-tab="t-map">🗺️ Risk Map</button>
+        <button class="tab-btn" data-tab="t-forecast">📈 Forecast</button>
+        <button class="tab-btn" data-tab="t-alerts">🔔 Alerts <span class="tab-badge">{{ alerts|length
+                }}</span></button>
+        <button class="tab-btn" data-tab="t-hospitals">🏥 Hospitals <span class="tab-badge ok">{{ kpi.total_hospitals
+                }}</span></button>
+        <button class="tab-btn" data-tab="t-resources">🛠️ Resources & Export</button>
+    </nav>
+
+    <!-- ═══ T1: OVERVIEW ═══ -->
+    <div class="tab-pane active" id="t-overview">
+        <div class="wrap">
+
+            <div class="section-head" style="padding-top:4px">
+                <div class="eyebrow">Facility Overview</div>
+                <div class="section-title">Facility KPI Summary</div>
+                <div class="section-sub">Real-time capacity tracking — {{ now_str }}</div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card k-total">
+                    <div class="kpi-ico">🏥</div>
+                    <div class="kpi-val">{{ kpi.total_hospitals }}</div>
+                    <div class="kpi-lbl">My Facility</div>
+                    <div class="kpi-sub">↔ Active link</div>
+                </div>
+                <div class="kpi-card k-beds">
+                    <div class="kpi-ico">🛏️</div>
+                    <div class="kpi-val flex-wrap">
+                        <span id="bed-val-display" style="cursor: pointer; position: relative;" title="Click to Edit"
+                            onclick="editBeds()">{{ "{:,}".format(kpi.total_beds) }}<span
+                                style="font-size: 14px; opacity: 0.5; margin-left: 5px;">✏️</span></span>
+                        <input type="number" id="bed-val-input"
+                            style="display: none; width: 100px; font-size: 20px; font-weight: 800; border: 1px solid var(--bdr); border-radius: 4px; padding: 2px 8px; background: transparent; color: var(--txt); outline: none;"
+                            value="{{ kpi.total_beds }}" onblur="saveBeds()"
+                            onkeydown="if(event.key === 'Enter') saveBeds()" />
+                    </div>
+                    <div class="kpi-lbl">Total Beds</div>
+                    <div class="kpi-sub">{{ kpi.total_icu }} ICU beds</div>
+                </div>
+                <div class="kpi-card k-high">
+                    <div class="kpi-ico">🔴</div>
+                    <div class="kpi-val">{{ kpi.high_risk }}</div>
+                    <div class="kpi-lbl">High Risk</div>
+                    <div class="kpi-sub trend-up">↑ Needs escalation</div>
+                </div>
+                <div class="kpi-card k-med">
+                    <div class="kpi-ico">🟡</div>
+                    <div class="kpi-val">{{ kpi.medium_risk }}</div>
+                    <div class="kpi-lbl">Medium Risk</div>
+                    <div class="kpi-sub">↔ Monitor closely</div>
+                </div>
+                <div class="kpi-card k-sri">
+                    <div class="kpi-ico">📊</div>
+                    <div class="kpi-val">{{ kpi.avg_sri }}</div>
+                    <div class="kpi-lbl">Avg SRI</div>
+                    <div class="kpi-sub">/100 district-wide</div>
+                </div>
+                <div class="kpi-card k-opd">
+                    <div class="kpi-ico">📈</div>
+                    <div class="kpi-val">{{ kpi.avg_opd_growth }}%</div>
+                    <div class="kpi-lbl">7-Day OPD Growth</div>
+                    <div class="kpi-sub {% if kpi.avg_opd_growth > 10 %}trend-up{% else %}trend-dn{% endif %}">{% if
+                        kpi.avg_opd_growth > 10 %}↑ Elevated{% else %}↓ Stable{% endif %}</div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="card">
+                    <div class="card-title">📊 Risk Distribution</div>
+                    <div class="chart-h"><canvas id="donutChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📊 Facility Count by Risk Band</div>
+                    <div class="chart-h"><canvas id="barChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- CASUALTY INTAKE & EMERGENCY ARRIVAL DESK -->
+            <div class="card gap-top" style="border: 2px solid var(--accent); background: #ffffff;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <div class="card-title" style="margin-bottom:2px; font-size:16px;">🚨 Casualty Intake & Emergency Arrival Desk</div>
+                        <div style="font-size:12px; color:var(--txt3);">Real-time patient dispatches, provisional bed holds, and 4-digit arrival OTP validation</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="live-btn" style="color:var(--txt2);"><span class="pulse"></span>Auto-refresh 5s</span>
+                        <button type="button" class="btn-view" onclick="refreshCasualtyDesk()" style="cursor:pointer;">↻ Refresh</button>
+                    </div>
+                </div>
+
+                <!-- OTP Verification Form -->
+                <div style="background: #f7faff; border: 1px solid #d0e1f9; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <div style="font-weight:700; font-size:13px; margin-bottom:10px; color:var(--navy);">⚡ Patient Arrival Verification (Gate / Casualty Triage)</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
+                        <div style="flex:1; min-width:200px;">
+                            <label style="display:block; font-size:11px; font-weight:700; color:var(--txt2); margin-bottom:4px;">EMERGENCY REQUEST ID</label>
+                            <input type="text" id="casualty-req-id" placeholder="e.g. emg-xxxxxxxx or select from below" style="width:100%; padding:8px 12px; border:1px solid var(--bdr); border-radius:6px; font-size:13px; font-family:var(--mono);" />
+                        </div>
+                        <div style="width:160px;">
+                            <label style="display:block; font-size:11px; font-weight:700; color:var(--txt2); margin-bottom:4px;">ARRIVAL OTP (4 DIGITS)</label>
+                            <input type="text" id="casualty-otp" maxlength="6" placeholder="e.g. 1234" style="width:100%; padding:8px 12px; border:1px solid var(--bdr); border-radius:6px; font-size:14px; font-weight:800; text-align:center; letter-spacing:3px; font-family:var(--mono);" />
+                        </div>
+                        <div>
+                            <button type="button" id="btn-verify-arrival" onclick="submitArrivalVerification()" style="padding:9px 18px; background:var(--blue); color:#fff; font-weight:700; font-size:12px; border-radius:6px; cursor:pointer; height:37px; transition:.15s;">
+                                ✓ Verify Arrival & Admit
+                            </button>
+                        </div>
+                    </div>
+                    <div id="arrival-feedback" style="display:none; margin-top:10px; padding:10px 14px; border-radius:6px; font-size:12.5px; font-weight:600;"></div>
+                </div>
+
+                <!-- Incoming Active Requests Table -->
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Patient / Phone</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Provisional Hold</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="casualty-requests-tbody">
+                            {% if incoming_requests %}
+                                {% for r in incoming_requests %}
+                                <tr>
+                                    <td style="font-family:var(--mono); font-weight:700;">{{ r.id }}</td>
+                                    <td>{{ r.patient_name or 'Emergency Patient' }}<br><span style="font-size:11px; color:var(--txt3);">{{ r.contact_phone or '—' }}</span></td>
+                                    <td><span class="pill medium">{{ r.category }}</span></td>
+                                    <td>
+                                        {% if r.status == 'PATIENT_ARRIVED' or r.status == 'completed' %}
+                                            <span class="pill low">ARRIVED</span>
+                                        {% elif r.status == 'cancelled' %}
+                                            <span class="pill high">CANCELLED</span>
+                                        {% else %}
+                                            <span class="pill high">{{ r.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if r.status == 'completed' or r.status == 'PATIENT_ARRIVED' %}
+                                            <span style="color:var(--lo); font-weight:700;">Bed Occupied</span>
+                                        {% elif r.status == 'cancelled' %}
+                                            <span style="color:var(--txt3);">Released</span>
+                                        {% else %}
+                                            <span style="color:var(--md); font-weight:700;">1 Bed Held (Provisional)</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="font-family:var(--mono); font-size:11px;">{{ r.created_at[:16] if r.created_at else '—' }}</td>
+                                    <td>
+                                        {% if r.status != 'PATIENT_ARRIVED' and r.status != 'completed' and r.status != 'cancelled' %}
+                                            <button type="button" class="btn-view" style="font-size:11px;" onclick="prefillVerify('{{ r.id }}')">Verify OTP</button>
+                                        {% else %}
+                                            <span style="font-size:11px; color:var(--txt3);">Admitted</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" style="text-align:center; padding:24px; color:var(--txt3);">
+                                        No active inbound emergency requests at this moment.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══ T-CASUALTY: DEDICATED CASUALTY INTAKE TAB ═══ -->
+    <div class="tab-pane" id="t-casualty">
+        <div class="wrap">
+            <div class="section-head" style="padding-top:4px">
+                <div class="eyebrow">Casualty Command</div>
+                <div class="section-title">Inbound Emergency Intake & Bed Holds</div>
+                <div class="section-sub">Validate arrival codes, confirm admissions, and audit active dispatches</div>
+            </div>
+            <!-- The same active casualty desk card is available on both tabs -->
+            <div class="card" style="border: 2px solid var(--accent); background: #ffffff;">
+                <div style="padding: 10px 0;">
+                    <p style="font-size:13px; color:var(--txt2); margin-bottom:14px;">
+                        Manage incoming emergency ambulances, check OTP arrival codes presented by emergency responders or family, and finalize bed allocation.
+                    </p>
+                    <button type="button" class="btn-view" onclick="document.querySelector('[data-tab=t-overview]').click(); document.getElementById('casualty-otp').focus();">
+                        → Jump to Quick Verification Form
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ T2: MAP ═══ -->
+    <div class="tab-pane" id="t-map">
+        <div class="wrap">
+            <div class="section-hdr">
+                <div class="section-head">
+                    <div class="eyebrow">Infrastructure Heatmap</div>
+                    <div class="section-title">District Hospital Risk Map</div>
+                    <div class="section-sub">Click any marker to view facility intelligence</div>
+                </div>
+                <select id="mapFilter" class="tbl-sel" onchange="filterMap()">
+                    <option value="">All Risk Levels</option>
+                    <option value="High">High Risk Only</option>
+                    <option value="Medium">Medium Risk Only</option>
+                    <option value="Low">Low Risk Only</option>
+                </select>
+            </div>
+            <div id="main-map"></div>
+        </div>
+    </div>
+
+    <!-- ═══ T3: FORECAST ═══ -->
+    <div class="tab-pane" id="t-forecast">
+        <div class="wrap">
+            <div class="section-head">
+                <div class="eyebrow">Predictive Intelligence</div>
+                <div class="section-title">7–14 Day District SRI Forecast</div>
+                <div class="section-sub">AI-generated strain trajectory with 90% confidence band</div>
+            </div>
+            {% set max_f = forecast_max %}
+            <div class="forecast-banner {% if max_f >= 80 %}warn{% else %}ok{% endif %}">
+                {% if max_f >= 80 %}⚠️ <strong>Overload Alert:</strong> Forecast SRI may reach {{ max_f }} within 14
+                days. Initiate preventive protocols.
+                {% else %}✅ Forecast remains <strong>below critical threshold</strong> for the next 14 days. Continue
+                routine monitoring.{% endif %}
+            </div>
+            <div class="card">
+                <div class="card-title">📈 Strain Risk Index — District Forecast (14 Days)</div>
+                <div style="position:relative;height:320px"><canvas id="forecastChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ T4: ALERTS ═══ -->
+    <div class="tab-pane" id="t-alerts">
+        <div class="wrap">
+            <div class="section-hdr">
+                <div class="section-head">
+                    <div class="eyebrow">Early Warning System</div>
+                    <div class="section-title">Active Infrastructure Alerts</div>
+                    <div class="section-sub">Auto-generated from SRI > 70, occupancy > 85%, OPD growth > 15%</div>
+                </div>
+                <span style="font-size:12px;font-family:var(--mono);color:var(--txt3)">{{ alerts|length }} active
+                    alerts</span>
+            </div>
+            <div class="alert-list">
+                {% for a in alerts %}
+                <div class="alert-item {{ a.severity_class }}">
+                    <span class="a-sev sev-{{ a.severity_class }}">{{ a.severity }}</span>
+                    <div class="a-body">
+                        <div class="a-hosp">{% if a.severity == 'High' %}⚠️{% else %}🔔{% endif %} {{ a.hospital }} — {{
+                            a.city }}</div>
+                        <div class="a-msg">{{ a.message }}</div>
+                        <div class="a-action">→ {{ a.action }}</div>
+                    </div>
+                    <div class="a-time">{{ a.time }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ T5: HOSPITALS TABLE ═══ -->
+    <div class="tab-pane" id="t-hospitals">
+        <div class="wrap">
+            <div class="section-head">
+                <div class="eyebrow">Hospital Intelligence</div>
+                <div class="section-title">Facility Strain Table</div>
+                <div class="section-sub">Click column headers to sort · Click "View Analytics" for full drill-down</div>
+            </div>
+            <div class="tbl-wrap">
+                <div class="tbl-toolbar">
+                    <input class="tbl-search" id="tblSearch" placeholder="Search hospital or district…"
+                        oninput="filterTable()">
+                    <select id="tblRisk" class="tbl-sel" onchange="filterTable()">
+                        <option value="">All Risk Levels</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                    <select id="tblDistrict" class="tbl-sel" onchange="filterTable()">
+                        <option value="">All Districts</option>
+                        {% for d in districts %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div style="overflow-x:auto">
+                    <table id="hospTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">Hospital ↕</th>
+                                <th onclick="sortTable(1)">District ↕</th>
+                                <th onclick="sortTable(2)">SRI ↕</th>
+                                <th onclick="sortTable(3)">Risk ↕</th>
+                                <th onclick="sortTable(4)">Occupancy ↕</th>
+                                <th onclick="sortTable(5)">OPD Growth ↕</th>
+                                <th onclick="sortTable(6)">Forecast ↕</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hospTbody">
+                            {% for h in hospitals %}
+                            {% set rc = 'high' if h.score >= 70 else ('medium' if h.score >= 40 else 'low') %}
+                            <tr data-risk="{{ h.strain_risk }}" data-district="{{ h.district }}">
+                                <td style="font-weight:700;max-width:190px">{{ h.name }}</td>
+                                <td>{{ h.district }}</td>
+                                <td class="{% if h.score>=70 %}text-hi{% elif h.score>=40 %}text-md{% else %}text-lo{% endif %}"
+                                    style="font-family:var(--mono);font-weight:800;">
+                                    {{ h.score }}</td>
+                                <td><span class="pill {{ rc }}">{{ h.strain_risk }}</span></td>
+                                <td style="font-family:var(--mono);">{{ h.bed_occupancy_pct }}%</td>
+                                <td class="{% if h.opd_growth_pct > 15 %}text-hi{% elif h.opd_growth_pct > 5 %}text-md{% else %}text-lo{% endif %}"
+                                    style="font-family:var(--mono);">
+                                    {% if h.opd_growth_pct > 0 %}+{% endif %}{{ h.opd_growth_pct }}%</td>
+                                <td style="font-family:var(--mono);">{% if h.sri_7day_forecast > h.score %}↑{% else
+                                    %}↓{%
+                                    endif %} {{ h.sri_7day_forecast }}</td>
+                                <td><button class="btn-view" onclick="openDrilldown({{ h.id }})">View Analytics</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ T6: RESOURCES + EXPORT ═══ -->
+    <div class="tab-pane" id="t-resources">
+        <div class="wrap">
+            <div class="section-head">
+                <div class="eyebrow">Command Centre</div>
+                <div class="section-title">Resource Planning & Reporting</div>
+                <div class="section-sub">AI-estimated requirements and administrative tools</div>
+            </div>
+
+            <div class="res-grid">
+                <div class="res-card">
+                    <div style="font-size:26px">🛏️</div>
+                    <div class="res-num">{{ resource.bed_reallocation }}</div>
+                    <div class="res-lbl">Beds for Reallocation</div>
+                    <div class="res-sub">From low-risk surplus facilities</div>
+                </div>
+                <div class="res-card">
+                    <div style="font-size:26px">👨‍⚕️</div>
+                    <div class="res-num">{{ resource.staff_reinforcement }}</div>
+                    <div class="res-lbl">Staff Reinforcement</div>
+                    <div class="res-sub">Doctors + support personnel</div>
+                </div>
+                <div class="res-card">
+                    <div style="font-size:26px">🏥</div>
+                    <div class="res-num">{{ resource.low_risk_alternatives|length }}</div>
+                    <div class="res-lbl">Low-Risk Alternatives</div>
+                    <div class="res-sub">Available for patient redirect</div>
+                </div>
+            </div>
+
+            <div class="card gap-top">
+                <div class="card-title" style="margin-bottom:10px">📍 Nearby Low-Risk Facilities Available for
+                    Redirection</div>
+                <div
+                    style="font-size:12.5px;color:var(--blue);background:#eaf4ff;border:1px solid #b3d4f5;border-radius:8px;padding:12px 16px;margin-bottom:14px">
+                    ℹ️ {{ resource.resource_gap_note }}</div>
+                {% for f in resource.low_risk_alternatives %}
+                <div class="alt-item">
+                    <div>
+                        <div class="alt-name">{{ f.name }}</div>
+                        <div style="font-size:11px;color:var(--txt3)">{{ f.city }}</div>
+                    </div>
+                    <div class="alt-beds">{{ f.available_beds }} beds free</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="section-head gap-top" style="margin-top:28px;padding-top:24px;border-top:1px solid var(--bdr)">
+                <div class="eyebrow">Reporting</div>
+                <div class="section-title">Download & Share Reports</div>
+            </div>
+            <div class="exp-grid">
+                <div class="exp-card" onclick="exportCSV()">
+                    <div class="exp-icon">📊</div>
+                    <div class="exp-title">Export Hospital Data</div>
+                    <div class="exp-sub">CSV with SRI, occupancy & trends</div>
+                    <div class="exp-btn">Download CSV</div>
+                </div>
+                <div class="exp-card" onclick="window.print()">
+                    <div class="exp-icon">📄</div>
+                    <div class="exp-title">Weekly SRI Report</div>
+                    <div class="exp-sub">Formatted for district authority</div>
+                    <div class="exp-btn">Print / PDF</div>
+                </div>
+                <div class="exp-card" onclick="alert('District Strain Summary generated.')">
+                    <div class="exp-icon">🗺️</div>
+                    <div class="exp-title">District Summary</div>
+                    <div class="exp-sub">Aggregated district intelligence</div>
+                    <div class="exp-btn">Generate</div>
+                </div>
+                <div class="exp-card" onclick="alert('Alert report link copied.')">
+                    <div class="exp-icon">🔔</div>
+                    <div class="exp-title">Share Alert Report</div>
+                    <div class="exp-sub">Send to senior health officials</div>
+                    <div class="exp-btn">Share</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ DRILL-DOWN MODAL ═══ -->
+    <div class="modal-overlay" id="drillModal">
+        <div class="modal-box">
+            <div class="modal-hdr">
+                <div class="modal-title" id="modalHospName">Hospital Analytics</div>
+                <button class="modal-close" onclick="closeDrilldown()">✕</button>
+            </div>
+            <div class="modal-stats" id="modalStats"></div>
+            <div class="modal-body">
+                <div>
+                    <div class="sub-h">📈 OPD Patient Trend — Last 30 Days</div>
+                    <div class="modal-chart"><canvas id="opdChart"></canvas></div>
+                    <div class="sub-h">🔮 14-Day SRI Forecast</div>
+                    <div class="modal-chart"><canvas id="fcChart"></canvas></div>
+                </div>
+                <div>
+                    <div class="sub-h">🤖 Why Is This Hospital At Risk?</div>
+                    <ul style="list-style:none" id="driversList"></ul>
+                    <div class="sub-h">✅ AI Recommendations</div>
+                    <ul style="list-style:none" id="recsList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // @ts-nocheck
+        // Note: The IDE may show a syntax error here, but this is perfectly
+        // valid code since Jinja renders the array safely before the browser sees it.
+        const HOSPITALS = {{ hospitals | tojson | safe }};
+        const RISK_DIST = {{ risk_dist | tojson | safe }};
+        const FC_DATES = {{ forecast_dates | safe }};
+        const FC_VALUES = {{ forecast_values | safe }};
+        const FC_UPPER = {{ forecast_upper | safe }};
+        const FC_LOWER = {{ forecast_lower | safe }};
+
+        // ── TABS ─────────────────────────────────────────────────────
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                // Invalidate map size when map tab opens
+                if (btn.dataset.tab === 't-map' && window._mapInst) { setTimeout(() => window._mapInst.invalidateSize(), 100); }
+            });
+        });
+
+        // ── CHARTS ───────────────────────────────────────────────────
+        Chart.defaults.font.family = "'Segoe UI', sans-serif";
+        Chart.defaults.font.size = 12;
+
+        new Chart(document.getElementById('donutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                datasets: [{
+                    data: [RISK_DIST.low, RISK_DIST.medium, RISK_DIST.high],
+                    backgroundColor: ['#1e8449', '#d68910', '#c0392b'], borderWidth: 2, borderColor: '#fff'
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Low (0–39)', 'Medium (40–69)', 'High (70–100)'],
+                datasets: [{
+                    data: [RISK_DIST.low, RISK_DIST.medium, RISK_DIST.high],
+                    backgroundColor: ['#1e8449', '#d68910', '#c0392b'], borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        new Chart(document.getElementById('forecastChart'), {
+            type: 'line',
+            data: {
+                labels: FC_DATES,
+                datasets: [
+                    { label: 'Upper Bound', data: FC_UPPER, fill: false, borderColor: 'rgba(41,128,212,.2)', borderDash: [4, 4], pointRadius: 0, tension: .4 },
+                    { label: 'SRI Forecast', data: FC_VALUES, fill: false, borderColor: '#1d5fa8', borderWidth: 2.5, pointRadius: 3, tension: .4 },
+                    { label: 'Lower Bound', data: FC_LOWER, fill: '-1', borderColor: 'rgba(41,128,212,.2)', backgroundColor: 'rgba(41,128,212,.06)', borderDash: [4, 4], pointRadius: 0, tension: .4 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                scales: { y: { min: 0, max: 100, title: { display: true, text: 'SRI Score' } }, x: {} }
+            }
+        });
+
+        // ── MAP ───────────────────────────────────────────────────────
+        const map = L.map('main-map').setView([14.5, 76.0], 7);
+        window._mapInst = map;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 18 }).addTo(map);
+        let allMarkers = [];
+        function riskColor(s) { return s >= 70 ? '#c0392b' : s >= 40 ? '#d68910' : '#1e8449'; }
+        function makeIcon(s) {
+            const c = riskColor(s);
+            return L.divIcon({
+                className: '', iconSize: [30, 30], iconAnchor: [15, 15],
+                html: `<div style="width:28px;height:28px;background:${c};border:2.5px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);color:#fff;font-size:10px;font-weight:800">${s}</div>`
+            });
+        }
+        HOSPITALS.forEach(h => {
+            if (!h.lat || !h.lon) return;
+            const m = L.marker([h.lat, h.lon], { icon: makeIcon(h.score) }).addTo(map);
+            m.riskLabel = h.strain_risk;
+            m.bindPopup(`<div style="font-family:Segoe UI,sans-serif;min-width:200px">
+    <b style="font-size:13px">${h.name}</b><br>
+    <span style="font-size:11.5px;color:#555">${h.city} · ${h.specialty}</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;font-size:12px">
+      <div><b>SRI</b><br><span style="font-size:20px;font-weight:800;color:${riskColor(h.score)}">${h.score}</span>/100</div>
+      <div><b>Occupancy</b><br><span style="font-size:18px;font-weight:800">${h.bed_occupancy_pct || 'N/A'}%</span></div>
+    </div>
+    <div style="font-size:11.5px;background:#f4f7fb;border-radius:6px;padding:6px 10px;margin-bottom:8px">
+      OPD Growth: ${h.opd_growth_pct > 0 ? '+' : ''}${h.opd_growth_pct || 0}% &nbsp;|&nbsp; Risk: <span style="color:${riskColor(h.score)}">${h.strain_risk}</span>
+    </div>
+    <button onclick="openDrilldown(${h.id})" style="width:100%;padding:7px;background:#1d5fa8;color:#fff;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:12px">View Analytics →</button>
+  </div>`, { maxWidth: 270 });
+            allMarkers.push(m);
+        });
+        function filterMap() {
+            const v = document.getElementById('mapFilter').value;
+            allMarkers.forEach(m => { if (!v || m.riskLabel === v) map.addLayer(m); else map.removeLayer(m); });
+        }
+
+        // ── TABLE ─────────────────────────────────────────────────────
+        let sortDir = {};
+        function sortTable(col) {
+            const tb = document.getElementById('hospTbody');
+            const rows = [...tb.querySelectorAll('tr')];
+            sortDir[col] = (sortDir[col] || 1) * -1;
+            rows.sort((a, b) => {
+                let av = a.cells[col]?.innerText.replace(/[↑↓+%]/g, '').trim() || '';
+                let bv = b.cells[col]?.innerText.replace(/[↑↓+%]/g, '').trim() || '';
+                const na = parseFloat(av), nb = parseFloat(bv);
+                return isNaN(na) ? av.localeCompare(bv) * sortDir[col] : (na - nb) * sortDir[col];
+            });
+            rows.forEach(r => tb.appendChild(r));
+        }
+        function filterTable() {
+            const q = document.getElementById('tblSearch').value.toLowerCase();
+            const rk = document.getElementById('tblRisk').value;
+            const dt = document.getElementById('tblDistrict').value;
+            document.querySelectorAll('#hospTbody tr').forEach(r => {
+                r.style.display = ((!q || r.innerText.toLowerCase().includes(q)) && (!rk || r.dataset.risk === rk) && (!dt || r.dataset.district === dt)) ? '' : 'none';
+            });
+        }
+
+        // ── DRILL-DOWN ────────────────────────────────────────────────
+        let opdInst = null, fcInst = null;
+        function openDrilldown(id) {
+            fetch(`/api/hospital-analytics/${id}`).then(r => r.json()).then(d => {
+                const h = d.hospital;
+                const rc = h.score >= 70 ? 'var(--hi)' : h.score >= 40 ? 'var(--md)' : 'var(--lo)';
+                document.getElementById('modalHospName').textContent = `${h.name} — Drill-Down Analytics`;
+                document.getElementById('modalStats').innerHTML = `
+      <div class="ms"><div class="ms-val" style="color:${rc}">${h.score}</div><div class="ms-lbl">SRI Score</div></div>
+      <div class="ms"><div class="ms-val">${h.bed_occupancy_pct}%</div><div class="ms-lbl">Bed Occupancy</div></div>
+      <div class="ms"><div class="ms-val">${h.opd_growth_pct > 0 ? '+' : ''}${h.opd_growth_pct}%</div><div class="ms-lbl">OPD Growth</div></div>
+      <div class="ms"><div class="ms-val">${h.doctor_ratio}</div><div class="ms-lbl">Doctors/100 Beds</div></div>`;
+                document.getElementById('driversList').innerHTML = d.drivers.map(x => `<li class="driver-item"><span style="font-size:16px">${x.icon}</span><span>${x.text}</span></li>`).join('');
+                document.getElementById('recsList').innerHTML = d.ai_recs.map(x => `<li class="rec-item ${x.priority}"><span>${x.icon}</span><span><strong>${x.priority}:</strong> ${x.rec}</span></li>`).join('');
+                if (opdInst) { opdInst.destroy(); }
+                opdInst = new Chart(document.getElementById('opdChart'), {
+                    type: 'line', data: { labels: d.opd_dates, datasets: [{ label: 'OPD', data: d.opd_values, fill: true, borderColor: '#1d5fa8', backgroundColor: 'rgba(29,95,168,.07)', borderWidth: 2, pointRadius: 1, tension: .4 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: {}, x: { ticks: { maxTicksLimit: 8 } } } }
+                });
+                if (fcInst) { fcInst.destroy(); }
+                fcInst = new Chart(document.getElementById('fcChart'), {
+                    type: 'line', data: {
+                        labels: d.fc_dates, datasets: [
+                            { label: 'SRI', data: d.fc_values, fill: false, borderColor: '#c0392b', borderWidth: 2.5, pointRadius: 3, tension: .4 },
+                            { label: 'Past', data: d.fc_values.slice(0, 7).concat(Array(7).fill(null)), fill: false, borderColor: '#1e8449', borderWidth: 2, pointRadius: 2, tension: .4 }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { min: 0, max: 100 }, x: { ticks: { maxTicksLimit: 7 } } } }
+                });
+                document.getElementById('drillModal').classList.add('open');
+            }).catch(e => console.error(e));
+        }
+        function closeDrilldown() {
+            document.getElementById('drillModal').classList.remove('open');
+            if (opdInst) { opdInst.destroy(); opdInst = null; }
+            if (fcInst) { fcInst.destroy(); fcInst = null; }
+        }
+        document.getElementById('drillModal').addEventListener('click', e => { if (e.target.id === 'drillModal') closeDrilldown(); });
+
+        // ── EXPORT ────────────────────────────────────────────────────
+        function exportCSV() {
+            const cols = ['id', 'name', 'city', 'district', 'specialty', 'score', 'strain_risk', 'bed_occupancy_pct', 'opd_growth_pct', 'num_beds', 'num_doctors'];
+            const rows = HOSPITALS.map(h => cols.map(c => JSON.stringify(h[c] ?? '')).join(','));
+            const a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent([cols.join(','), ...rows].join('\n'));
+            a.download = 'aiis_hospitals.csv'; a.click();
+        }
+    </script>
+    <script>
+        function editBeds() {
+            document.getElementById('bed-val-display').style.display = 'none';
+            const input = document.getElementById('bed-val-input');
+            input.style.display = 'inline-block';
+            input.focus();
+        }
+
+        async function saveBeds() {
+            const input = document.getElementById('bed-val-input');
+            const display = document.getElementById('bed-val-display');
+            const newVal = parseInt(input.value);
+
+            const hospitalIdStr = "{{ hospitals[0].id if hospitals else 0 }}";
+            const hospitalId = parseInt(hospitalIdStr, 10);
+            if (!hospitalId || isNaN(newVal)) return;
+
+            try {
+                input.disabled = true;
+                const resp = await fetch('/api/update-beds', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hospital_id: hospitalId, num_beds: newVal })
+                });
+
+                if (resp.ok) {
+                    // Reload to reflect all updated KPIs (scores, wait times etc) uniformly
+                    window.location.reload();
+                } else {
+                    alert('Error updating beds');
+                    input.style.display = 'none';
+                    display.style.display = 'inline-block';
+                }
+            } catch (err) {
+                console.error(err);
+                input.style.display = 'none';
+                display.style.display = 'inline-block';
+            } finally {
+                input.disabled = false;
+            }
+        }
+
+        // ── CASUALTY INTAKE & ARRIVAL VERIFICATION ────────────────────
+        const HOSPITAL_ID = {{ hospitals[0].id if hospitals else 1 }};
+        const JWT_TOKEN = "{{ jwt_token }}";
+
+        function prefillVerify(reqId) {
+            const reqInput = document.getElementById('casualty-req-id');
+            if (reqInput) reqInput.value = reqId;
+            const otpInput = document.getElementById('casualty-otp');
+            if (otpInput) {
+                otpInput.focus();
+                otpInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        async function submitArrivalVerification() {
+            const reqId = (document.getElementById('casualty-req-id')?.value || '').trim();
+            const otp = (document.getElementById('casualty-otp')?.value || '').trim();
+            const fb = document.getElementById('arrival-feedback');
+            const btn = document.getElementById('btn-verify-arrival');
+
+            if (!reqId) {
+                if (fb) {
+                    fb.style.display = 'block';
+                    fb.style.background = '#fde8e8';
+                    fb.style.color = '#c81e1e';
+                    fb.textContent = 'Please enter or select an Emergency Request ID.';
+                }
+                return;
+            }
+            if (!otp || otp.length < 4) {
+                if (fb) {
+                    fb.style.display = 'block';
+                    fb.style.background = '#fde8e8';
+                    fb.style.color = '#c81e1e';
+                    fb.textContent = 'Please enter the 4-digit arrival OTP.';
+                }
+                return;
+            }
+
+            try {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = 'Verifying...';
+                }
+
+                const headers = { 'Content-Type': 'application/json' };
+                if (JWT_TOKEN) {
+                    headers['Authorization'] = `Bearer ${JWT_TOKEN}`;
+                }
+
+                const res = await fetch(`/api/emergency/${encodeURIComponent(reqId)}/verify-arrival`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ otp: otp })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    if (fb) {
+                        fb.style.display = 'block';
+                        fb.style.background = '#def7ec';
+                        fb.style.color = '#03543f';
+                        fb.innerHTML = `✅ <strong>Patient Arrival Confirmed!</strong> Bed allocated and provisional hold converted to occupied admission.`;
+                    }
+                    const otpInput = document.getElementById('casualty-otp');
+                    if (otpInput) otpInput.value = '';
+                    refreshCasualtyDesk();
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } else {
+                    if (fb) {
+                        fb.style.display = 'block';
+                        fb.style.background = '#fde8e8';
+                        fb.style.color = '#c81e1e';
+                        fb.textContent = `❌ Verification failed: ${data.error?.message || data.message || 'Invalid OTP or unauthorized'}`;
+                    }
+                }
+            } catch (err) {
+                if (fb) {
+                    fb.style.display = 'block';
+                    fb.style.background = '#fde8e8';
+                    fb.style.color = '#c81e1e';
+                    fb.textContent = `❌ Network error verifying arrival: ${err.message}`;
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '✓ Verify Arrival & Admit';
+                }
+            }
+        }
+
+        async function refreshCasualtyDesk() {
+            try {
+                const res = await fetch(`/api/emergency/hospital/${HOSPITAL_ID}/requests`);
+                if (!res.ok) return;
+                const json = await res.json();
+                const list = json.requests || json.data || [];
+                
+                const badge = document.getElementById('casualty-badge');
+                if (badge) badge.textContent = list.length;
+
+                const tbody = document.getElementById('casualty-requests-tbody');
+                if (!tbody) return;
+
+                if (list.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--txt3);">No active inbound emergency requests at this moment.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = list.map(r => {
+                    const isArrived = r.status === 'PATIENT_ARRIVED' || r.status === 'completed';
+                    const isCancelled = r.status === 'cancelled';
+                    const statusPill = isArrived ? '<span class="pill low">ARRIVED</span>' : (isCancelled ? '<span class="pill high">CANCELLED</span>' : '<span class="pill high">' + (r.status || 'PENDING') + '</span>');
+                    const holdText = isArrived ? '<span style="color:var(--lo); font-weight:700;">Bed Occupied</span>' : (isCancelled ? '<span style="color:var(--txt3);">Released</span>' : '<span style="color:var(--md); font-weight:700;">1 Bed Held (Provisional)</span>');
+                    const actionBtn = (!isArrived && !isCancelled) ? `<button type="button" class="btn-view" style="font-size:11px;" onclick="prefillVerify('${r.id}')">Verify OTP</button>` : `<span style="font-size:11px; color:var(--txt3);">Admitted</span>`;
+                    
+                    return `
+                        <tr>
+                            <td style="font-family:var(--mono); font-weight:700;">${r.id}</td>
+                            <td>${r.patient_name || 'Emergency Patient'}<br><span style="font-size:11px; color:var(--txt3);">${r.contact_phone || '—'}</span></td>
+                            <td><span class="pill medium">${r.category || 'Emergency'}</span></td>
+                            <td>${statusPill}</td>
+                            <td>${holdText}</td>
+                            <td style="font-family:var(--mono); font-size:11px;">${r.created_at ? r.created_at.substring(0, 16) : '—'}</td>
+                            <td>${actionBtn}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.warn('Casualty desk polling error:', e);
+            }
+        }
+
+        // Auto poll casualty desk every 5 seconds
+        setInterval(refreshCasualtyDesk, 5000);
+    </script>
+</body>
+
+</html>

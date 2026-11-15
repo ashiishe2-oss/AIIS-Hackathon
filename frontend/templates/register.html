@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AIIS – Secure login portal for health officials and the general public." />
+    <title>AIIS – Login</title>
+
+    <style>
+        /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+        :root {
+            --primary: #1f4e79;
+            --primary-dark: #163a5f;
+            --primary-mid: #2a6099;
+            --primary-light: #e8f0f9;
+            --primary-faint: #f2f6fc;
+
+            --accent: #2a9d8f;
+            --accent-light: #edf7f6;
+
+            --high: #e63946;
+
+            --bg: #f0f4f8;
+            --surface: #ffffff;
+            --surface-raised: #fafbfd;
+
+            --border: #dce4ef;
+            --border-strong: #c4d0e3;
+            --border-focus: #2a6099;
+
+            --text: #1e293b;
+            --text-secondary: #4a5568;
+            --text-muted: #7a8fa8;
+
+            --shadow-sm: 0 1px 4px rgba(15, 40, 80, 0.07);
+            --shadow-card: 0 4px 24px rgba(15, 40, 80, 0.10),
+                0 1px 4px rgba(15, 40, 80, 0.06);
+            --shadow-card-hover: 0 8px 40px rgba(15, 40, 80, 0.14),
+                0 2px 8px rgba(15, 40, 80, 0.08);
+            --shadow-btn: 0 2px 8px rgba(31, 78, 121, 0.30);
+            --shadow-btn-hover: 0 4px 16px rgba(31, 78, 121, 0.40);
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-pill: 999px;
+
+            --font: 'Segoe UI', -apple-system, BlinkMacSystemFont,
+                'Helvetica Neue', Helvetica, sans-serif;
+            --font-mono: 'Cascadia Code', 'Consolas', 'SF Mono', 'Menlo', monospace;
+
+            --transition: 0.18s ease;
+            --transition-slow: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================================
+       RESET
+    ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+       PAGE ANIMATION
+    ============================================================ */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulseDot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.72);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -400px 0;
+            }
+
+            100% {
+                background-position: 400px 0;
+            }
+        }
+
+        /* ============================================================
+       BACKGROUND — Subtle grid texture
+    ============================================================ */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-color: var(--bg);
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.45;
+        }
+
+        /* Left panel accent */
+        .page-bg::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-mid) 60%, var(--accent) 100%);
+        }
+
+        /* ============================================================
+       LAYOUT WRAPPER
+    ============================================================ */
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 32px 16px;
+        }
+
+        .page-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        /* ============================================================
+       GOVERNMENT HEADER BAND
+    ============================================================ */
+        .gov-band {
+            width: 100%;
+            max-width: 480px;
+            background: var(--primary);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            animation: fadeIn 0.3s ease both;
+        }
+
+        .gov-band__left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.75);
+            font-family: var(--font-mono);
+        }
+
+        .gov-band__dot {
+            width: 7px;
+            height: 7px;
+            background: #4ade80;
+            border-radius: var(--radius-pill);
+            animation: pulseDot 2.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        .gov-band__right {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: rgba(255, 255, 255, 0.50);
+            white-space: nowrap;
+        }
+
+        /* ============================================================
+       MAIN LOGIN CARD
+    ============================================================ */
+        .login-card {
+            .auth-container {
+                width: 100%;
+                max-width: 440px;
+                margin: auto;
+                position: relative;
+                z-index: 10;
+            }
+
+            .auth-card {
+                background: var(--surface);
+                /* Changed from --c-surface */
+                border: 1px solid var(--border);
+                /* Changed from --c-border */
+                border-radius: var(--radius-xl);
+                /* Changed from --r-xl */
+                box-shadow: var(--shadow-card);
+                /* Changed from --sh-md */
+                overflow: hidden;
+                animation: fadeUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.05s both;
+                /* Changed from formIn .6s cubic-bezier(.16, 1, .3, 1) both */
+            }
+
+            .card-header {
+                padding: 32px 32px 24px;
+                text-align: center;
+                border-bottom: 1px solid var(--border);
+                /* Changed from --c-border */
+                background: var(--primary-faint);
+                /* Changed from --c-bg */
+            }
+
+            .ch-icon {
+                width: 54px;
+                height: 54px;
+                background: #fff;
+                border: 1px solid var(--border);
+                /* Changed from --c-border */
+                border-radius: var(--radius-lg);
+                /* Changed from --r-lg */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                margin: 0 auto 16px;
+                box-shadow: var(--shadow-sm);
+                /* Changed from --sh-sm */
+            }
+
+            .ch-title {
+                font-size: 22px;
+                font-weight: 800;
+                color: var(--text);
+                /* Changed from --c-text */
+                letter-spacing: -.5px;
+                line-height: 1.2;
+                margin-bottom: 6px;
+            }
+
+            .ch-sub {
+                font-size: 14px;
+                color: var(--text-muted);
+                /* Changed from --c-text-2 */
+            }
+
+            .card-body {
+                padding: 32px;
+            }
+
+            /* ----  Card Header  ---- */
+            /* Removed original .card-header, .card-header__logo, .logo-icon-wrap, .logo-text-wrap, .logo-name, .logo-full, .card-header__tagline, .tagline-icon */
+
+            /* ----  Card Body (Form)  ---- */
+            /* .card-body { padding: 32px 40px 28px; } */
+            /* This was already defined above, keeping the new one */
+
+            .form-title {
+                font-size: 17px;
+                font-weight: 700;
+                color: var(--text);
+                letter-spacing: -0.3px;
+                margin-bottom: 4px;
+            }
+
+            .form-subtitle {
+                font-size: 13px;
+                color: var(--text-muted);
+                margin-bottom: 28px;
+            }
+
+            /* ----  Form Groups  ---- */
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                margin-bottom: 7px;
+                letter-spacing: -0.1px;
+            }
+
+            .form-label span {
+                color: var(--high);
+                margin-left: 2px;
+            }
+
+            /* Input wrapper — for icon prefix */
+            .input-wrap {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .input-icon {
+                position: absolute;
+                left: 14px;
+                font-size: 15px;
+                pointer-events: none;
+                z-index: 1;
+                opacity: 0.55;
+            }
+
+            .form-input,
+            .form-select {
+                width: 100%;
+                padding: 11px 14px 11px 42px;
+                font-family: var(--font);
+                font-size: 14px;
+                color: var(--text);
+                background: var(--surface);
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius-sm);
+                outline: none;
+                transition:
+                    border-color var(--transition),
+                    box-shadow var(--transition),
+                    background var(--transition);
+                appearance: none;
+                -webkit-appearance: none;
+            }
+
+            /* Select arrow */
+            .select-wrap::after {
+                content: '▾';
+                position: absolute;
+                right: 14px;
+                font-size: 13px;
+                color: var(--text-muted);
+                pointer-events: none;
+            }
+
+            .form-input::placeholder {
+                color: var(--text-muted);
+                font-size: 13.5px;
+            }
+
+            .form-input:hover,
+            .form-select:hover {
+                border-color: var(--border-strong);
+            }
+
+            .form-input:focus,
+            .form-select:focus {
+                border-color: var(--border-focus);
+                background: var(--primary-faint);
+                box-shadow: 0 0 0 3px rgba(42, 96, 153, 0.12);
+            }
+
+            .form-select option {
+                color: var(--text);
+                background: var(--surface);
+            }
+
+            /* Password field — show/hide toggle */
+            .password-toggle {
+                position: absolute;
+                right: 14px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 15px;
+                color: var(--text-muted);
+                padding: 4px;
+                border-radius: var(--radius-sm);
+                transition: color var(--transition);
+                line-height: 1;
+            }
+
+            .password-toggle:hover {
+                color: var(--primary);
+            }
+
+            /* Forgot password row */
+            .form-row-flex {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 7px;
+            }
+
+            .forgot-link {
+                font-size: 12.5px;
+                font-weight: 600;
+                color: var(--primary-mid);
+                text-decoration: none;
+                transition: color var(--transition);
+            }
+
+            .forgot-link:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+            /* ----  Submit Button  ---- */
+            .btn-login {
+                width: 100%;
+                padding: 13px;
+                background: var(--primary);
+                color: #ffffff;
+                border: none;
+                border-radius: var(--radius-sm);
+                font-family: var(--font);
+                font-size: 15px;
+                font-weight: 700;
+                letter-spacing: -0.2px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                box-shadow: var(--shadow-btn);
+                transition:
+                    background var(--transition),
+                    box-shadow var(--transition),
+                    transform var(--transition);
+                margin-top: 8px;
+            }
+
+            .btn-login:hover {
+                background: var(--primary-dark);
+                box-shadow: var(--shadow-btn-hover);
+                transform: translateY(-1px);
+            }
+
+            .btn-login:active {
+                transform: translateY(0);
+                box-shadow: var(--shadow-btn);
+            }
+
+            .btn-login__icon {
+                font-size: 16px;
+            }
+
+            /* ----  Divider  ---- */
+            .card-divider {
+                height: 1px;
+                background: var(--border);
+                margin: 24px 0 20px;
+            }
+
+            /* ----  Security Notice  ---- */
+            .security-notice {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                background: var(--surface-raised);
+                border: 1px solid var(--border);
+                border-left: 3px solid var(--primary-mid);
+                border-radius: var(--radius-sm);
+                padding: 12px 14px;
+            }
+
+            .security-notice__icon {
+                font-size: 15px;
+                flex-shrink: 0;
+                margin-top: 1px;
+            }
+
+            .security-notice__text {
+                font-size: 12px;
+                color: var(--text-muted);
+                line-height: 1.5;
+            }
+
+            .security-notice__text strong {
+                color: var(--text-secondary);
+                font-weight: 600;
+            }
+
+            /* ----  Card Footer  ---- */
+            .card-footer {
+                background: var(--primary-faint);
+                border-top: 1px solid var(--border);
+                padding: 14px 40px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+            }
+
+            .card-footer__help {
+                font-size: 12px;
+                color: var(--text-muted);
+            }
+
+            .card-footer__help a {
+                color: var(--primary-mid);
+                font-weight: 600;
+                text-decoration: none;
+                transition: color var(--transition);
+            }
+
+            .card-footer__help a:hover {
+                color: var(--primary);
+                text-decoration: underline;
+            }
+
+            .card-footer__version {
+                font-size: 11px;
+                font-family: var(--font-mono);
+                color: var(--text-muted);
+            }
+
+            /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+            @media (max-width: 540px) {
+                .page-wrapper {
+                    padding: 20px 12px;
+                }
+
+                .gov-band,
+                .login-card {
+                    max-width: 100%;
+                }
+
+                .card-header {
+                    padding: 24px 24px 20px;
+                }
+
+                .card-body {
+                    padding: 24px 24px 20px;
+                }
+
+                .card-footer {
+                    padding: 12px 24px;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 4px;
+                }
+
+                .logo-name {
+                    font-size: 22px;
+                }
+
+                .logo-icon-wrap {
+                    width: 44px;
+                    height: 44px;
+                    font-size: 22px;
+                }
+
+                .gov-band__right {
+                    display: none;
+                }
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+
+    <!-- Background texture layer -->
+    <div class="page-bg" aria-hidden="true"></div>
+
+    <!-- ============================================================
+       PAGE WRAPPER
+  ============================================================ -->
+    <div class="page-wrapper">
+        <main class="page-center" role="main">
+
+            <!-- ============================================================
+           GOVERNMENT AUTHORITY BAND
+      ============================================================ -->
+            <div class="gov-band" role="banner" aria-label="System status">
+                <div class="gov-band__left">
+                    <span class="gov-band__dot" aria-hidden="true"></span>
+                    Secure Government Portal
+                </div>
+                <div class="gov-band__right">
+                    Health Intelligence System · All Users Welcome
+                </div>
+            </div>
+
+            <!-- ============================================================
+           LOGIN CARD
+      ============================================================ -->
+            <div class="auth-card" role="region" aria-label="Create Account">
+
+                <!-- Card Header: Branding -->
+                <div class="card-header">
+                    <div class="ch-icon" aria-hidden="true">👤</div>
+                    <h1 class="ch-title">Create Account</h1>
+                    <p class="ch-sub">Join the AIIS platform</p>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- FLASH ALERTS -->
+                    {% if error %}
+                    <div class="error-box"
+                        style="background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;padding:12px 14px;border-radius:var(--radius-sm);font-size:13.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+                        <span aria-hidden="true" style="font-size:16px;">⚠️</span>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endif %}
+                    {% if success %}
+                    <div class="alert alert-success" role="alert"
+                        style="background:#f0fdf4; border:1px solid #86efac; color:#16a34a;">
+                        <span class="icon">✅</span>
+                        {{ success }}
+                    </div>
+                    {% endif %}
+
+                    <!-- LOGIN FORM -->
+                    <form action="/register" method="POST" novalidate aria-label="Registration form" id="reg-form">
+
+                        <!-- NAME -->
+                        <div class="form-group" id="grp-name">
+                            <label class="form-label" for="name">Full Name</label>
+                            <div class="input-wrap">
+                                <span class="input-icon" aria-hidden="true">👤</span>
+                                <input type="text" id="name" name="name" class="form-input"
+                                    placeholder="Enter your full name" required />
+                            </div>
+                        </div>
+
+                        <!-- Username / Email -->
+                        <div class="form-group" id="grp-user">
+                            <label class="form-label" for="username">
+                                Username or Email <span aria-hidden="true">*</span>
+                            </label>
+                            <div class="input-wrap">
+                                <span class="input-icon" aria-hidden="true">📧</span>
+                                <input class="form-input" type="text" id="username" name="username"
+                                    placeholder="your.email@example.com" autocomplete="username" required
+                                    aria-required="true" spellcheck="false" autocapitalize="off" />
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group" id="grp-pass">
+                            <div class="form-row-flex">
+                                <label class="form-label" for="password" style="margin-bottom:0;">
+                                    Password <span aria-hidden="true">*</span>
+                                </label>
+                                <a href="#" class="forgot-link" tabindex="0" aria-label="Forgot your password?">
+                                    Forgot password?
+                                </a>
+                            </div>
+                            <div class="input-wrap" style="margin-top:7px;">
+                                <span class="input-icon" aria-hidden="true">🔒</span>
+                                <input class="form-input" type="password" id="password" name="password"
+                                    placeholder="••••••••" autocomplete="new-password" required aria-required="true" />
+                                <button type="button" class="password-toggle" aria-label="Toggle password visibility"
+                                    onclick="
+                    var f = document.getElementById('password');
+                    f.type = f.type === 'password' ? 'text' : 'password';
+                    this.textContent = f.type === 'password' ? '👁️' : '🙈';
+                  " tabindex="0">👁️</button>
+                            </div>
+                        </div>
+
+                        <!-- ROLE SELECT -->
+                        <div class="form-group">
+                            <label class="form-label" for="role">Requested Role</label>
+                            <div class="input-wrap">
+                                <span class="input-icon" aria-hidden="true">🏢</span>
+                                <select id="role" name="role" class="form-input" style="appearance: none;" required>
+                                    <option value="" disabled selected>Select an access level...</option>
+                                    <optgroup label="🌍 Citizen Access">
+                                        <option value="public">👤 Common People / Public User</option>
+                                    </optgroup>
+                                    <optgroup label="🏛️ Administrator">
+                                        <option value="authority">Authorities</option>
+                                        <option value="hospital_admin">Medical Authority / Hospital Admin</option>
+                                    </optgroup>
+                                </select>
+                                <span class="select-wrap::after"
+                                    style="position: absolute; right: 14px; font-size: 13px; color: var(--text-muted); pointer-events: none;">▾</span>
+                            </div>
+                        </div>
+
+                        <!-- SUBMIT -->
+                        <button type="submit" class="btn-login" aria-label="Create Account">
+                            <span class="btn-login__icon" aria-hidden="true">→</span>
+                            Create Account
+                        </button>
+
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="card-divider" aria-hidden="true"></div>
+
+                    <!-- Security Notice -->
+                    <div class="security-notice" role="note" aria-label="Security information">
+                        <span class="security-notice__icon" aria-hidden="true">🛡️</span>
+                        <p class="security-notice__text">
+                            <strong>Secure System.</strong> Health authority accounts are verified and
+                            monitored. Public users can freely access the citizen portal. All sessions are logged.
+                        </p>
+                    </div>
+
+                </div><!-- /card-body -->
+
+                <!-- Card Footer -->
+                <div class="card-footer"
+                    style="background:var(--primary-faint); border-top:1px solid var(--border); padding:14px 40px; display:flex; align-items:center; justify-content:center;">
+                    <div style="font-size:12.5px; color:var(--text-muted);">Already have an account? <a href="/login"
+                            style="color:var(--primary-mid); font-weight:600; text-decoration:none;">Log in instead</a>
+                    </div>
+                </div>
+
+            </div><!-- /auth-card -->
+
+        </main>
+
+        <!-- ============================================================
+         SITE FOOTER
+    ============================================================ -->
+        <footer class="site-footer" role="contentinfo">
+            <p class="site-footer__name">AIIS – State Health Intelligence Platform</p>
+            <p class="site-footer__legal">
+                © 2025 State Health Department. All rights reserved. For official use only.
+            </p>
+            <nav class="site-footer__links" aria-label="Footer links">
+                <a href="#" class="site-footer__link">Privacy Policy</a>
+                <span class="site-footer__sep" aria-hidden="true">·</span>
+                <a href="#" class="site-footer__link">Terms of Use</a>
+                <span class="site-footer__sep" aria-hidden="true">·</span>
+                <a href="#" class="site-footer__link">Accessibility</a>
+                <span class="site-footer__sep" aria-hidden="true">·</span>
+                <a href="#" class="site-footer__link">Help</a>
+            </nav>
+        </footer>
+
+    </div><!-- /page-wrapper -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const roleSelect = document.getElementById('role');
+            const grpName = document.getElementById('grp-name');
+            const grpUser = document.getElementById('grp-user');
+            const grpPass = document.getElementById('grp-pass');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('username');
+            const passInput = document.getElementById('password');
+
+            function toggleAuthFields() {
+                const val = roleSelect.value;
+                if (val === 'public') {
+                    grpName.style.display = 'none';
+                    grpUser.style.display = 'none';
+                    grpPass.style.display = 'none';
+                    nameInput.removeAttribute('required');
+                    emailInput.removeAttribute('required');
+                    passInput.removeAttribute('required');
+                } else {
+                    grpName.style.display = 'block';
+                    grpUser.style.display = 'block';
+                    grpPass.style.display = 'block';
+                    nameInput.setAttribute('required', 'required');
+                    emailInput.setAttribute('required', 'required');
+                    passInput.setAttribute('required', 'required');
+                }
+            }
+
+            roleSelect.addEventListener('change', toggleAuthFields);
+            toggleAuthFields();
+        });
+    </script>
+    </script>
+</body>
+
+</html>

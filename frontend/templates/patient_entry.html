@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AIIS — Arogya Infrastructure Intelligence System. Unified healthcare portal offering instant emergency hospital discovery and public healthcare facility access.">
+  <meta name="theme-color" content="#102544">
+  <title>AIIS | Unified Healthcare Portal &amp; Emergency SOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/patient_portal.css') }}">
+</head>
+<body class="portal-body" data-initial-mode="{{ initial_mode|default('') }}">
+
+  <!-- ── Top Portal Navigation Bar ─────────────────────────────────────────── -->
+  <header class="portal-header">
+    <a class="brand" href="/" aria-label="AIIS Unified Healthcare Portal Home">
+      <span class="brand-mark pulse-badge" aria-hidden="true">✚</span>
+      <span class="brand-copy">
+        <strong>AIIS</strong>
+        <small>Arogya Infrastructure Intelligence System</small>
+      </span>
+    </a>
+    <nav class="header-actions" aria-label="Main portal navigation">
+      <a class="text-link" href="#services">Healthcare Services</a>
+      <a class="text-link" href="#how-it-works">How It Works</a>
+      <a class="text-link" href="#capabilities">Capabilities</a>
+      <a class="text-link" href="{{ url_for('public_dashboard') }}">Hospital Directory</a>
+      <a class="header-emergency-link pulse-badge" href="tel:112" aria-label="Emergency Call 112">🚨 Call 112</a>
+      <a class="text-link" href="{{ url_for('login') }}" style="border-left: 1px solid var(--line); padding-left: 14px;">Staff Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ── Hero Section ────────────────────────────────────────────────────── -->
+    <section class="portal-hero" aria-labelledby="hero-heading">
+      <div class="hero-orb hero-orb-one" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-two" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          National Health Infrastructure Intelligence · Government of India
+        </span>
+        <h1 id="hero-heading">
+          Healthcare support,<br>
+          <span>when every moment matters.</span>
+        </h1>
+        <p>
+          Connect with healthcare facilities through intelligent discovery and coordinated emergency assistance. 
+          AIIS unites public hospital directories, early strain warnings, and emergency guidance into one unified portal.
+        </p>
+
+        <!-- Location indicator & service instruction -->
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); font-size: 11px; font-weight: 700;">
+            <span style="color: #38d6b4;">📍</span> Coverage: Western &amp; Southern Regions · 36+ Monitored Public Facilities
+          </div>
+          <span style="font-size: 12px; color: rgba(255,255,255,0.8);">Select your required healthcare pathway below:</span>
+        </div>
+
+        <div class="hero-note" role="alert">
+          <span class="note-icon" aria-hidden="true">🚨</span>
+          <span>
+            <strong>Immediate Emergency Protocol:</strong> If someone is in critical condition, unconscious, or in severe trauma, 
+            dial <strong>112</strong> or <strong>108</strong> immediately. Do not delay emergency medical treatment while browsing this website.
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-side" aria-label="AIIS quick telemetry summary">
+        <div class="side-card">
+          <div class="side-card-top">
+            <span class="side-icon">🏥</span>
+            <span class="side-label">AIIS · Unified Citizen Gateway</span>
+          </div>
+          <div class="side-stat">
+            Two Care Paths.<br>
+            <strong>One Integrated Platform.</strong>
+          </div>
+          <div class="side-rule"></div>
+          <div class="side-meta">
+            <span class="status-dot"></span> Active Hospital Directory &amp; SOS Telemetry
+          </div>
+          <small class="side-foot">
+            Directory information reflects registered public health facilities. Emergency clinical readiness must always be confirmed directly with facility or emergency services.
+          </small>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Choice Section: Dual Gateway Cards ──────────────────────────────── -->
+    <section class="choice-section" id="services" aria-labelledby="choice-title">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Choose Your Pathway</span>
+          <h2 id="choice-title">Select a Healthcare Service</h2>
+        </div>
+        <p>No account or registration required for citizen access.</p>
+      </div>
+
+      <div class="choice-grid">
+        <!-- ── Option A: Emergency SOS Card ── -->
+        <article class="choice-card emergency-choice" id="emergency-choice-card">
+          <div class="choice-icon emergency-icon pulse-badge" aria-hidden="true">
+            <span>🚨</span>
+          </div>
+          <div class="choice-content">
+            <span class="choice-tag choice-tag-red">Urgent · Immediate Care</span>
+            <h3>Emergency SOS</h3>
+            <p>
+              Instantly find nearby public hospitals equipped for emergency intake. 
+              Share your location or select your city, choose your condition type, and receive immediate facility contacts and routing.
+            </p>
+            <ul class="choice-points">
+              <li>6 Clinical emergency categories (Cardiac, Trauma, Stroke, etc.)</li>
+              <li>GPS proximity matching or manual city search</li>
+              <li>Direct 112 / 108 hotline integration &amp; navigation links</li>
+            </ul>
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <button type="button" class="choice-button button-emergency" id="toggle-emergency-btn" aria-expanded="false" aria-controls="emergency-embedded-panel">
+                Open Emergency SOS <span aria-hidden="true">↓</span>
+              </button>
+              <a href="tel:112" class="hotline-btn hotline-112" style="font-size: 12px; padding: 10px 14px;">
+                📞 Dial 112
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── Option B: Normal Healthcare Card ── -->
+        <article class="choice-card normal-choice" id="normal-choice-card">
+          <div class="choice-icon normal-icon" aria-hidden="true">
+            <span>🏥</span>
+          </div>
+          <div class="choice-content">
+            <span class="choice-tag choice-tag-blue">Planned &amp; Outpatient Care</span>
+            <h3>Normal Healthcare</h3>
+            <p>
+              Explore the complete public hospital directory. Filter facilities by city, specialty, doctor availability, 
+              and bed capacity metrics across the AIIS monitoring network.
+            </p>
+            <ul class="choice-points">
+              <li>Comprehensive hospital search by city &amp; clinical specialty</li>
+              <li>Infrastructure metrics, doctor staffing, and interactive GIS map</li>
+              <li>Facility address, phone contacts, and OPD timings</li>
+            </ul>
+            <a class="choice-button button-normal" href="{{ url_for('public_dashboard') }}">
+              Explore Hospital Directory <span aria-hidden="true">→</span>
+            </a>
+
+            <!-- Quick Jump by City into Public Dashboard -->
+            <form action="{{ url_for('public_dashboard') }}" method="GET" class="normal-quick-search" aria-label="Quick hospital search">
+              <span style="font-size: 11px; font-weight: 700; color: var(--ink-soft);">Quick Jump to City Directory:</span>
+              <div class="quick-search-row">
+                <select name="city" class="quick-search-select" aria-label="Select City">
+                  <option value="">All Cities in Network</option>
+                  {% for c in cities %}
+                  <option value="{{ c }}">{{ c }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="quick-search-btn">
+                  Search ↗
+                </button>
+              </div>
+            </form>
+          </div>
+        </article>
+      </div>
+
+      <div class="portal-footnote">
+        <span class="footnote-icon" aria-hidden="true">ℹ️</span>
+        <p>
+          <strong>Public Information Notice:</strong> AIIS is an infrastructure coordination and hospital discovery platform. 
+          It does not guarantee hospital admission, emergency bed vacancy, or immediate ambulance availability. 
+          In critical emergencies, always contact <strong>112</strong> or your local emergency response service.
+        </p>
+      </div>
+
+      <!-- ── Embedded Emergency SOS Interface (Directly Inside Portal) ───────── -->
+      <div class="emergency-panel-embedded" id="emergency-embedded-panel" hidden aria-labelledby="embedded-emergency-title">
+        <div class="emergency-panel-inner">
+          <div class="panel-header-strip">
+            <div class="panel-title-wrap">
+              <span class="panel-badge">
+                <span class="panel-badge-dot"></span> Emergency Facility Discovery
+              </span>
+              <h2 id="embedded-emergency-title" style="margin: 0; font-size: 20px; letter-spacing: -0.03em;">
+                Find Immediate Hospital Care Near You
+              </h2>
+            </div>
+            <div class="emergency-hotlines">
+              <a href="tel:112" class="hotline-btn hotline-112" title="Call National Emergency Number 112">
+                <span>🚨</span> Call 112
+              </a>
+              <a href="tel:108" class="hotline-btn hotline-108" title="Call National Ambulance Service 108">
+                <span>🚑</span> Ambulance 108
+              </a>
+              <button type="button" class="panel-close-btn" id="close-emergency-panel" aria-label="Close emergency panel">
+                ✕ Close Panel
+              </button>
+            </div>
+          </div>
+
+          <div class="critical-notice" role="alert" style="margin-bottom: 22px;">
+            <span class="notice-symbol" aria-hidden="true">!</span>
+            <p>
+              <strong>Do not delay life-saving care:</strong> If a patient has severe chest pain, breathing arrest, loss of consciousness, or uncontrollable hemorrhage, 
+              call <strong>112</strong> immediately. The tool below helps identify proximity-based public facilities in the AIIS directory.
+            </p>
+          </div>
+
+          <section class="emergency-layout">
+            <form class="emergency-form" id="emergency-search-form" novalidate>
+              <div class="form-section-heading">
+                <span class="step-number">01</span>
+                <div>
+                  <h2>What type of emergency?</h2>
+                  <p>Categorizing your situation helps highlight facilities with relevant specialties. (This is not a clinical diagnosis).</p>
+                </div>
+              </div>
+
+              <fieldset class="emergency-types">
+                <legend class="sr-only">Select emergency condition category</legend>
+
+                <label class="type-option">
+                  <input type="radio" name="emergency_type" value="cardiac">
+                  <span class="type-option-ui">
+                    <span class="type-symbol">❤️</span>
+                    <span>
+                      <strong>Chest Pain / Cardiac</strong>
+                      <small>Suspected heart attack, angina, or severe arrhythmia</small>
+                    </span>
+                    <span class="type-check"></span>
+                  </span>
+                </label>
+
+                <label class="type-option">
+                  <input type="radio" name="emergency_type" value="stroke">
+                  <span class="type-option-ui">
+                    <span class="type-symbol">🧠</span>
+                    <span>
+                      <strong>Stroke / Neurological</strong>
+                      <small>Facial droop, arm weakness, or speech difficulty (FAST)</small>
+                    </span>
+                    <span class="type-check"></span>
+                  </span>
+                </label>
+
+                <label class="type-option">
+                  <input type="radio" name="emergency_type" value="trauma">
+                  <span class="type-option-ui">
+                    <span class="type-symbol">🩹</span>
+                    <span>
+                      <strong>Accident / Trauma</strong>
+                      <small>Road accident, severe bleeding, burns, or bone fracture</small>
+                    </span>
+                    <span class="type-check"></span>
+                  </span>
+                </label>
+
+                <label class="type-option">
+                  <input type="radio" name="emergency_type" value="breathing">
+                  <span class="type-option-ui">
+                    <span class="type-symbol">🫁</span>
+                    <span>
+                      <strong>Breathing Difficulty</strong>
+                      <small>Severe asthma, choking, hypoxia, or respiratory distress</small>
+                    </span>
+                    <span class="type-check"></span>
+                  </span>
+                </label>
+
+                <label class="type-option">
+                  <input type="radio" name="emergency_type" value="women_child">
+                  <span class="type-option-ui">
+                    <span class="type-symbol">👶</span>
+                    <span>
+                      <strong>Paediatric / Maternal</strong>
+                      <small>Child acute illness, high fever, or labor complications</small>
+                    </span>
+                    <span class="type-check"></span>
+                  </span>
+                </label>
+
+                <label class="type-option">
+                  <input type="radio" name="emergency_type" value="other" checked>
+                  <span class="type-option-ui">
+                    <span class="type-symbol">🩺</span>
+                    <span>
+                      <strong>Other / Unsure</strong>
+                      <small>General severe medical distress or uncertain symptom</small>
+                    </span>
+                    <span class="type-check"></span>
+                  </span>
+                </label>
+              </fieldset>
+
+              <div class="form-divider"></div>
+
+              <div class="form-section-heading">
+                <span class="step-number">02</span>
+                <div>
+                  <h2>Where are you located?</h2>
+                  <p>Use your device GPS for accurate straight-line distance, or choose your city manually.</p>
+                </div>
+              </div>
+
+              <div class="location-actions">
+                <button class="location-button" type="button" id="use-location-button">
+                  <span class="location-button-icon" aria-hidden="true">📍</span>
+                  <span>
+                    <strong>Use my current location</strong>
+                    <small>Click to request browser GPS coordinates</small>
+                  </span>
+                  <span class="location-button-arrow" aria-hidden="true">→</span>
+                </button>
+                <div class="location-status" id="location-status" aria-live="polite">Location has not been shared yet.</div>
+              </div>
+
+              <div class="manual-location">
+                <label for="city-select">Or choose your city manually</label>
+                <select id="city-select" name="city">
+                  <option value="">Select a city</option>
+                  {% for city in cities %}
+                  <option value="{{ city }}">{{ city }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <button class="find-button" type="submit" id="find-hospitals-button">
+                <span>Find nearby hospitals</span>
+                <span aria-hidden="true">→</span>
+              </button>
+              <p class="form-privacy-note">
+                Your location coordinates are processed only in-memory for proximity ranking and are never sold or permanently logged.
+              </p>
+            </form>
+
+            <aside class="emergency-side-panel">
+              <div class="side-panel-icon" aria-hidden="true">🧭</div>
+              <h2>Emergency Action Steps</h2>
+              <ol class="how-list">
+                <li>
+                  <span>1</span>
+                  <div>
+                    <strong>Identify Primary Symptom</strong>
+                    <small>Select the category that best matches the urgent condition.</small>
+                  </div>
+                </li>
+                <li>
+                  <span>2</span>
+                  <div>
+                    <strong>Capture Proximity</strong>
+                    <small>GPS calculates straight-line distance to nearby public hospitals.</small>
+                  </div>
+                </li>
+                <li>
+                  <span>3</span>
+                  <div>
+                    <strong>Contact &amp; Navigate</strong>
+                    <small>Use the direct telephone link and Google Maps driving directions.</small>
+                  </div>
+                </li>
+              </ol>
+
+              <div class="side-panel-warning">
+                <strong>Safety Disclaimer</strong>
+                <p>
+                  Directory rankings reflect proximity only. Live emergency receiving status, ICU bed availability, and doctor readiness must always be verified with the facility.
+                </p>
+              </div>
+
+              <div style="margin-top: 18px; padding: 14px; border-radius: 11px; background: #f0f7ff; border: 1px solid #d0e4ff;">
+                <strong style="color: #1a4f94; font-size: 11px; display: block; margin-bottom: 4px;">National Emergency Helplines</strong>
+                <div style="display: grid; gap: 4px; font-size: 11px; color: var(--ink-soft);">
+                  <div>🚨 <strong>112</strong> — Integrated National Emergency</div>
+                  <div>🚑 <strong>108</strong> — Emergency Medical &amp; Ambulance</div>
+                  <div>👩 <strong>1091</strong> — Women's Helpline</div>
+                  <div>👶 <strong>1098</strong> — Childline Helpline</div>
+                </div>
+              </div>
+            </aside>
+          </section>
+
+          <!-- ── Hospital Discovery Results Section ── -->
+          <section class="results-section" id="hospital-results" hidden aria-labelledby="results-title">
+            <div class="results-heading">
+              <div>
+                <span class="section-kicker">Discovered Facilities</span>
+                <h2 id="results-title">Nearby Hospital Directory Matches</h2>
+                <p id="results-subtitle">Results are ordered by proximity. Real-time road travel times may vary based on traffic.</p>
+              </div>
+              <span class="results-count" id="results-count">0 facilities</span>
+            </div>
+
+            <div class="results-warning">
+              <strong>Confirm Before Travel:</strong> The facilities below are registered public healthcare infrastructure from the AIIS database. 
+              The current dataset does not verify real-time receiving status, staffing shifts, or bed availability. 
+              Always call the facility or 112 before departing for emergency care.
+            </div>
+
+            <div class="hospital-results-grid" id="hospital-results-grid" aria-live="polite"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section: How AIIS Works ─────────────────────────────────────────── -->
+    <section class="info-section" id="how-it-works" aria-labelledby="how-title">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Operational Workflow</span>
+          <h2 id="how-title">How AIIS Protects Healthcare Capacity</h2>
+        </div>
+        <p>A multi-layered intelligence platform for citizens and public health authorities.</p>
+      </div>
+
+      <div class="info-grid-3">
+        <div class="info-card">
+          <div class="info-icon-box">🔍</div>
+          <h4>1. Intelligent Discovery</h4>
+          <p>
+            Citizens can instantly locate public healthcare facilities based on precise proximity, specialties, and 
+            infrastructure tiers without navigating fragmented state databases.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon-box">⚡</div>
+          <h4>2. Telemetry &amp; Early Warning</h4>
+          <p>
+            The backend synthesizes bed occupancy rates, doctor-to-patient staffing ratios, and OPD growth velocities into a unified 
+            Strain Risk Index (SRI) to forecast overload 7–14 days in advance.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon-box">🔄</div>
+          <h4>3. Coordinated Mutual Aid</h4>
+          <p>
+            District health officers can redirect non-emergency patient surges from strained tertiary centers to low-risk secondary facilities 
+            before capacity reaches critical saturation.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section: Healthcare Intelligence Capabilities ──────────────────── -->
+    <section class="info-section" id="capabilities" aria-labelledby="cap-title">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Platform Capabilities</span>
+          <h2 id="cap-title">Advanced Public Health Engineering</h2>
+        </div>
+        <p>Built for real-world public health infrastructure across India.</p>
+      </div>
+
+      <div class="info-grid-3">
+        <div class="info-card">
+          <div class="info-icon-box" style="background: #fff1f2; color: var(--red);">📈</div>
+          <h4>Predictive Strain Forecasting</h4>
+          <p>
+            Random Forest machine learning algorithms evaluate seasonal disease spikes, weather factors, and OPD surge trajectories 
+            to identify impending capacity bottlenecks.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon-box" style="background: #edf7f6; color: var(--teal);">🗺️</div>
+          <h4>Spatial GIS Risk Mapping</h4>
+          <p>
+            Real-time interactive geographical heatmaps visualize facility-level strain across entire districts, enabling tactical ambulance 
+            routing and inter-facility triage.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon-box" style="background: #eff6ff; color: var(--blue);">🛡️</div>
+          <h4>Government Authority Command</h4>
+          <p>
+            Role-based security dashboards provide District Health Officers (DHO) and Hospital Superintendents with instant mutual aid directives, 
+            resource planning, and incident escalation.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section: Hospital Network Coverage ──────────────────────────────── -->
+    <section class="info-section" id="network" aria-labelledby="network-title">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Network Directory</span>
+          <h2 id="network-title">Monitored Healthcare Network</h2>
+        </div>
+        <a href="{{ url_for('public_dashboard') }}" class="text-link" style="color: var(--blue); font-weight: 800; font-size: 13px;">
+          View Full Interactive Directory &amp; Map →
+        </a>
+      </div>
+
+      <div style="background: #ffffff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow); margin-top: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+          <div>
+            <span style="font-size: 26px; font-weight: 900; color: var(--navy); display: block;">36+</span>
+            <strong style="font-size: 13px; color: var(--ink);">Core Public Hospitals</strong>
+            <p style="margin: 4px 0 0; color: var(--muted); font-size: 11px;">Government Medical Colleges &amp; District Hospitals</p>
+          </div>
+          <div>
+            <span style="font-size: 26px; font-weight: 900; color: var(--teal); display: block;">100%</span>
+            <strong style="font-size: 13px; color: var(--ink);">Free Public Access</strong>
+            <p style="margin: 4px 0 0; color: var(--muted); font-size: 11px;">No paywall, registration or patient subscription required</p>
+          </div>
+          <div>
+            <span style="font-size: 26px; font-weight: 900; color: var(--blue); display: block;">7–14 Days</span>
+            <strong style="font-size: 13px; color: var(--ink);">Predictive Early Warning</strong>
+            <p style="margin: 4px 0 0; color: var(--muted); font-size: 11px;">Ahead-of-time strain forecasting for health authorities</p>
+          </div>
+          <div>
+            <span style="font-size: 26px; font-weight: 900; color: var(--red); display: block;">112</span>
+            <strong style="font-size: 13px; color: var(--ink);">Direct Hotline Link</strong>
+            <p style="margin: 4px 0 0; color: var(--muted); font-size: 11px;">Integrated one-touch access to National Emergency Response</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── Portal Footer ─────────────────────────────────────────────────────── -->
+  <footer class="portal-footer" style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+      <div style="display: grid; gap: 4px;">
+        <strong style="color: var(--navy); font-size: 14px;">AIIS — Arogya Infrastructure Intelligence System</strong>
+        <span style="color: var(--muted); font-size: 11px;">Ministry of Health &amp; Family Welfare Alignment · Government Healthcare Technology Prototype</span>
+      </div>
+      <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap;">
+        <a href="/" style="font-weight: 700; color: var(--ink-soft);">Home</a>
+        <a href="#services" style="font-weight: 700; color: var(--ink-soft);">Emergency SOS</a>
+        <a href="{{ url_for('public_dashboard') }}" style="font-weight: 700; color: var(--ink-soft);">Hospital Directory</a>
+        <a href="{{ url_for('login') }}" style="font-weight: 800; color: var(--blue);">Staff Login ↗</a>
+      </div>
+    </div>
+    <div style="border-top: 1px solid var(--line); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--muted);">
+      <span>© {{ current_year }} AIIS. Open Healthcare Infrastructure Technology Initiative.</span>
+      <span>For critical medical emergencies in India, dial <a href="tel:112" style="color: var(--red); font-weight: 800;">112</a> or <a href="tel:108" style="color: var(--blue); font-weight: 800;">108</a>.</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/emergency.js') }}" defer></script>
+</body>
+</html>
+
